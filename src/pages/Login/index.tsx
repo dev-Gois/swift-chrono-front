@@ -1,73 +1,72 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useForm } from 'react-hook-form';
+import { loginSchema, LoginFormValues } from './utils';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { z } from 'zod';
 import { Loader2 } from 'lucide-react';
+import { useLogin } from '@/services/useAuth';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-
-const loginSchema = z.object({
-  email: z.string().email({ message: 'Please enter a valid email address' }),
-  password: z.string().min(6, { message: 'Password must be at least 6 characters' }),
-});
-
-type LoginFormValues = z.infer<typeof loginSchema>;
+import { useAuthStore } from '@/stores/auth';
 
 export default function LoginPage() {
-  const [isLoading, setIsLoading] = useState(false);
+  const { mutateAsync: login, isPending: isLoading } = useLogin();
+  const { user } = useAuthStore();
   const navigate = useNavigate();
   const { toast } = useToast();
 
   const form = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
-      email: '',
+      name: '',
       password: '',
     },
   });
 
   async function onSubmit(data: LoginFormValues) {
-    setIsLoading(true);
-    
-    // Simulate API call
-    setTimeout(() => {
-      setIsLoading(false);
-      
-      // For demo purposes, any login is successful
+    try {
+      await login(data);
       toast({
-        title: 'Login successful',
-        description: 'Welcome back!',
-      });
-      
+        title: 'Login efetuado com sucesso!',
+        description: 'Seja bem-vindo!',
+      })
       navigate('/dashboard');
-    }, 1500);
+    } catch (error) {
+      toast({
+        title: 'Erro ao fazer login',
+        description: 'Verifique suas credenciais e tente novamente.',
+        variant: 'destructive',
+      });
+    }
   }
+
+  useEffect(() => {
+    if (user) {
+      navigate('/dashboard');
+    }
+  }, [user]);
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-background to-secondary/30 p-4">
       <Card className="w-full max-w-md shadow-lg">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
-          <CardDescription className="text-center">
-            Enter your credentials to access your account
-          </CardDescription>
+          <CardTitle className="text-2xl font-bold text-center">SwiftChrono - Login</CardTitle>
         </CardHeader>
         <CardContent>
           <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
               <FormField
                 control={form.control}
-                name="email"
+                name="name"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Email</FormLabel>
+                    <FormLabel>Nome</FormLabel>
                     <FormControl>
-                      <Input placeholder="your.email@example.com" {...field} />
+                      <Input placeholder="Fulano" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -78,7 +77,7 @@ export default function LoginPage() {
                 name="password"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Password</FormLabel>
+                    <FormLabel>Senha</FormLabel>
                     <FormControl>
                       <Input type="password" placeholder="••••••••" {...field} />
                     </FormControl>
@@ -90,7 +89,7 @@ export default function LoginPage() {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Logging in...
+                    Aguarde um pouco..
                   </>
                 ) : (
                   'Login'
@@ -99,17 +98,6 @@ export default function LoginPage() {
             </form>
           </Form>
         </CardContent>
-        <CardFooter className="flex flex-col space-y-4">
-          <div className="text-sm text-center text-muted-foreground">
-            <span>Don't have an account? </span>
-            <Button variant="link" className="p-0 h-auto" onClick={() => toast({ title: "Sign up not implemented", description: "This is just a demo" })}>
-              Sign up
-            </Button>
-          </div>
-          <Button variant="ghost" className="w-full" onClick={() => toast({ title: "Password reset not implemented", description: "This is just a demo" })}>
-            Forgot your password?
-          </Button>
-        </CardFooter>
       </Card>
     </div>
   );
