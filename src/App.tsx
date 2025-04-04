@@ -8,7 +8,7 @@ import { Dashboard } from './pages/Admin/Dashboard';
 import { Athletes } from './pages/Admin/Athletes';
 import { Courses } from './pages/Admin/Courses';
 import { Categories } from './pages/Admin/Categories';
-import { Settings } from './pages/Admin/Settings';
+import Settings from './pages/Admin/Settings';
 import { Ranking } from './pages/Admin/Ranking';
 
 function App() {
