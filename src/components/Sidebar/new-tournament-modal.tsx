@@ -1,26 +1,62 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog'
-import { Input } from '../ui/input'
-import { Button } from '../ui/button'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { useState } from "react"
+import { useCreateTournament } from "@/services/useTournaments"
 
-type NewTournamentModalProps = {
-  isOpen: boolean
-  setIsOpen: (isOpen: boolean) => void
+interface NewTournamentModalProps {
+  isOpen: boolean;
+  setIsOpen: (isOpen: boolean) => void;
 }
 
-export const NewTournamentModal = ({ isOpen, setIsOpen }: NewTournamentModalProps) => {
+export function NewTournamentModal({ isOpen, setIsOpen }: NewTournamentModalProps) {
+  const [name, setName] = useState("")
+  const { mutate: createTournament, isPending } = useCreateTournament()
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    createTournament(
+      { tournament: { name } },
+      {
+        onSuccess: () => {
+          setName("")
+          setIsOpen(false)
+        }
+      }
+    )
+  }
+
   return (
     <Dialog open={isOpen} onOpenChange={setIsOpen}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent>
         <DialogHeader>
-          <DialogTitle>Criar Competição</DialogTitle>
-          <DialogDescription>
-            Crie uma nova competição.
-          </DialogDescription>
+          <DialogTitle>Novo Torneio</DialogTitle>
         </DialogHeader>
-        <div className="grid gap-4 py-4">
-          <Input type="text" placeholder="Nome da competição" />
-          <Button type="submit">Criar</Button>
-        </div>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="space-y-2">
+            <Label htmlFor="name">Nome do Torneio</Label>
+            <Input
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              placeholder="Digite o nome do torneio"
+              required
+            />
+          </div>
+          <div className="flex justify-end gap-2">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => setIsOpen(false)}
+            >
+              Cancelar
+            </Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Criando..." : "Criar"}
+            </Button>
+          </div>
+        </form>
       </DialogContent>
     </Dialog>
   )
