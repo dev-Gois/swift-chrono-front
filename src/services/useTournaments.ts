@@ -4,12 +4,8 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { COLLECTION_TOURNAMENTS_ROUTE, MEMBER_TOURNAMENTS_ROUTE } from "@/constants/api_routes"
 import { api } from "@/hooks/axios"
 import { useToast } from "@/hooks/use-toast"
-
-interface CreateTournamentData {
-  tournament: {
-    name: string;
-  };
-}
+import { TournamentRequest, TournamentResponse } from "@/types/tournament"
+import { ErrorResponse } from "@/types/request"
 
 export const useFetchTournaments = () => {
   const setTournaments = useTournamentStore((state) => state.setTournaments)
@@ -30,8 +26,8 @@ export const useCreateTournament = () => {
   const queryClient = useQueryClient()
   const { toast } = useToast()
   
-  return useMutation({
-    mutationFn: async (data: CreateTournamentData) => {
+  return useMutation<TournamentResponse, ErrorResponse, TournamentRequest>({
+    mutationFn: async (data: TournamentRequest) => {
       const response = await api.post(COLLECTION_TOURNAMENTS_ROUTE, data)
       return response.data
     },
@@ -63,6 +59,22 @@ export const useDeleteTournament = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tournaments"] })
       setCurrentTournament(null)
+    },
+  })
+}
+
+export const useUpdateTournament = () => {
+  const queryClient = useQueryClient()
+  const setCurrentTournament = useTournamentStore((state) => state.setCurrentTournament)
+
+  return useMutation<TournamentResponse, ErrorResponse, TournamentRequest>({
+    mutationFn: async (data: TournamentRequest) => {
+      const response = await api.put(MEMBER_TOURNAMENTS_ROUTE(data.id), data)
+      return response.data
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["tournaments"] })
+      setCurrentTournament(data)
     },
   })
 }

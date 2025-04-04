@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { tournamentFormSchema, TournamentFormValues } from "./utils"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
-import { useDeleteTournament } from "@/services/useTournaments"
+import { useDeleteTournament, useUpdateTournament } from "@/services/useTournaments"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "@/hooks/use-toast"
 
@@ -19,7 +19,8 @@ export default function Settings() {
   const { theme, setTheme } = useTheme()
   const { toast } = useToast()
   const navigate = useNavigate()
-  const { mutate: deleteTournament, isPending } = useDeleteTournament()
+  const { mutate: deleteTournament, isPending: isDeleting } = useDeleteTournament()
+  const { mutate: updateTournament, isPending: isUpdating } = useUpdateTournament()
 
   const form = useForm<TournamentFormValues>({
     resolver: zodResolver(tournamentFormSchema),
@@ -29,7 +30,26 @@ export default function Settings() {
   })
 
   const handleSave = (data: TournamentFormValues) => {
-    console.log("Salvando...", data)
+    if (!currentTournament) return
+
+    updateTournament(
+      { id: currentTournament.id, tournament: { name: data.name } },
+      {
+        onSuccess: () => {
+          toast({
+            title: "Sucesso!",
+            description: "Torneio atualizado com sucesso.",
+          })
+        },
+        onError: () => {
+          toast({
+            title: "Erro!",
+            description: "Não foi possível atualizar o torneio.",
+            variant: "destructive",
+          })
+        }
+      }
+    )
   }
 
   const handleDelete = () => {
@@ -85,7 +105,9 @@ export default function Settings() {
                   </FormItem>
                 )}
               />
-              <Button type="submit">Salvar Alterações</Button>
+              <Button type="submit" disabled={isUpdating}>
+                {isUpdating ? "Salvando..." : "Salvar Alterações"}
+              </Button>
             </form>
           </Form>
         </CardContent>
@@ -151,10 +173,10 @@ export default function Settings() {
                 <AlertDialogCancel>Cancelar</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleDelete}
-                  disabled={isPending}
+                  disabled={isDeleting}
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
-                  {isPending ? "Deletando..." : "Deletar"}
+                  {isDeleting ? "Deletando..." : "Deletar"}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>
