@@ -26,8 +26,8 @@ export const useCreateTournament = () => {
   const queryClient = useQueryClient()
   const { toast } = useToast()
   
-  return useMutation<TournamentResponse, ErrorResponse, TournamentRequest>({
-    mutationFn: async (data: TournamentRequest) => {
+  return useMutation<TournamentResponse, ErrorResponse, Omit<TournamentRequest, "id">>({
+    mutationFn: async (data: Omit<TournamentRequest, "id">) => {
       const response = await api.post(COLLECTION_TOURNAMENTS_ROUTE, data)
       return response.data
     },
