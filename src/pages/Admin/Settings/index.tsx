@@ -9,10 +9,17 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { tournamentFormSchema, TournamentFormValues } from "./utils"
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
+import { useDeleteTournament } from "@/services/useTournaments"
+import { useNavigate } from "react-router-dom"
+import { useToast } from "@/hooks/use-toast"
 
 export default function Settings() {
   const { currentTournament } = useTournamentStore()
   const { theme, setTheme } = useTheme()
+  const { toast } = useToast()
+  const navigate = useNavigate()
+  const { mutate: deleteTournament, isPending } = useDeleteTournament()
 
   const form = useForm<TournamentFormValues>({
     resolver: zodResolver(tournamentFormSchema),
@@ -26,8 +33,24 @@ export default function Settings() {
   }
 
   const handleDelete = () => {
-    // TODO: Implementar deleção
-    console.log("Deletando...")
+    if (!currentTournament) return
+
+    deleteTournament(currentTournament.id, {
+      onSuccess: () => {
+        toast({
+          title: "Sucesso!",
+          description: "Torneio deletado com sucesso.",
+        })
+        navigate("/dashboard")
+      },
+      onError: () => {
+        toast({
+          title: "Erro!",
+          description: "Não foi possível deletar o torneio.",
+          variant: "destructive",
+        })
+      }
+    })
   }
 
   return (
@@ -112,12 +135,30 @@ export default function Settings() {
           </div>
         </CardContent>
         <CardFooter>
-          <Button
-            variant="destructive"
-            onClick={handleDelete}
-          >
-            Deletar Torneio
-          </Button>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive">Deletar Torneio</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta ação não pode ser desfeita. Isso irá permanentemente deletar o torneio
+                  e remover todos os dados associados do nosso servidor.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  disabled={isPending}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {isPending ? "Deletando..." : "Deletar"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
         </CardFooter>
       </Card>
     </div>

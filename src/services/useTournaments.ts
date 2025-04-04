@@ -1,7 +1,7 @@
 import { useTournamentStore } from "@/stores/tournaments"
 import { useAuthStore } from "@/stores/auth"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { COLLECTION_TOURNAMENTS_ROUTE } from "@/constants/api_routes"
+import { COLLECTION_TOURNAMENTS_ROUTE, MEMBER_TOURNAMENTS_ROUTE } from "@/constants/api_routes"
 import { api } from "@/hooks/axios"
 import { useToast } from "@/hooks/use-toast"
 
@@ -49,5 +49,20 @@ export const useCreateTournament = () => {
         variant: "destructive"
       })
     }
+  })
+}
+
+export const useDeleteTournament = () => {
+  const queryClient = useQueryClient()
+  const setCurrentTournament = useTournamentStore((state) => state.setCurrentTournament)
+  return useMutation({
+    mutationFn: async (id: string) => {
+      const response = await api.delete(MEMBER_TOURNAMENTS_ROUTE(id))
+      return response.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tournaments"] })
+      setCurrentTournament(null)
+    },
   })
 }

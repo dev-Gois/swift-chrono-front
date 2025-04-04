@@ -1,7 +1,7 @@
 export interface TournamentState {
   tournaments: Tournament[] | null
   currentTournament: Tournament | null
-  setCurrentTournament: (tournament: Tournament) => void
+  setCurrentTournament: (tournament: Tournament | null) => void
   setTournaments: (tournaments: Tournament[]) => void
 }
 
