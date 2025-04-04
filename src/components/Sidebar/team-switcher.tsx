@@ -77,7 +77,7 @@ export function TeamSwitcher({ tournaments, activeTournament, setActiveTournamen
                     <DropdownMenuItem
                       key={tournament.name}
                       onClick={() => setActiveTournament(tournament)}
-                      className="gap-2 p-2"
+                      className="gap-2 p-2 cursor-pointer"
                     >
                       <div className="flex size-6 items-center justify-center rounded-sm border">
                         <Trophy className="size-4 shrink-0" />
