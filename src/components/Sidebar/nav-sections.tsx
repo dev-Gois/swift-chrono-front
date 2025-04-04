@@ -9,6 +9,8 @@ import {
   Timer
 } from "lucide-react"
 
+import { Tournament } from "@/stores/tournaments/types"
+
 import {
   SidebarGroup,
   SidebarGroupLabel,
@@ -17,63 +19,51 @@ import {
   SidebarMenuItem
 } from "@/components/ui/sidebar"
 
-export function NavProjects() {
+export function NavSections({ currentTournament }: { currentTournament: Tournament | null }) {
   return (
     <SidebarGroup className="group-data-[collapsible=icon]:hidden">
       <SidebarGroupLabel>Cronometragem</SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <a href="#">
-              <Timer />
-              <span>Cronometrar</span>
-            </a>
+          <SidebarMenuButton disabled={!currentTournament}>
+            <Timer />
+            <span>Cronometrar</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <a href="#">
-              <Medal />
-              <span>Ranking</span>
-            </a>
+          <SidebarMenuButton disabled={!currentTournament}>
+            <Medal />
+            <span>Ranking</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
       <SidebarGroupLabel>Cadastros</SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <a href="#">
-              <UserRound />
-              <span>Atletas</span>
-            </a>
+          <SidebarMenuButton disabled={!currentTournament}>
+            <UserRound />
+            <span>Atletas</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <a href="#">
-              <LandPlot />
-              <span>Percursos</span>
-            </a>
+          <SidebarMenuButton disabled={!currentTournament}>
+            <LandPlot />
+            <span>Percursos</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
         <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <a href="#">
-              <LayoutList />
-              <span>Categorias</span>
-            </a>
+          <SidebarMenuButton disabled={!currentTournament}>
+            <LayoutList />
+            <span>Categorias</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>
       <SidebarGroupLabel>Geral</SidebarGroupLabel>
       <SidebarMenu>
         <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <a href="#">
-              <Settings />
-              <span>Configurações</span>
-            </a>
+          <SidebarMenuButton disabled={!currentTournament}>
+            <Settings />
+            <span>Configurações</span>
           </SidebarMenuButton>
         </SidebarMenuItem>
       </SidebarMenu>

@@ -17,19 +17,16 @@ import {
   useSidebar,
 } from "@/components/ui/sidebar"
 
-interface Team {
-  name: string
-  plan: string
-}
+import { Tournament } from "@/stores/tournaments/types"
 
 interface Props {
-  teams: Team[] | null
-  activeTeam: Team | undefined
-  setActiveTeam: (team: Team) => void
+  tournaments: Tournament[] | null
+  activeTournament: Tournament | null
+  setActiveTournament: (tournament: Tournament) => void
   setIsModalOpen: (isOpen: boolean) => void
 }
 
-export function TeamSwitcher({ teams, activeTeam, setActiveTeam, setIsModalOpen }: Props) {
+export function TeamSwitcher({ tournaments, activeTournament, setActiveTournament, setIsModalOpen }: Props) {
   const { isMobile } = useSidebar()
 
   return (
@@ -41,13 +38,13 @@ export function TeamSwitcher({ teams, activeTeam, setActiveTeam, setIsModalOpen 
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              {activeTeam ? (
+              {activeTournament ? (
                 <>
                   <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
                     <Trophy className="size-4" />
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">{activeTeam.name}</span>
+                    <span className="truncate font-semibold">{activeTournament.name}</span>
                     <span className="truncate text-xs">XCO</span>
                   </div>
                 </>
@@ -71,21 +68,21 @@ export function TeamSwitcher({ teams, activeTeam, setActiveTeam, setIsModalOpen 
             sideOffset={4}
           >
             {
-              (teams && teams.length >= 1) && (
+              (tournaments && tournaments.length >= 1) && (
                 <>
                   <DropdownMenuLabel className="text-xs text-muted-foreground">
                     Provas
                   </DropdownMenuLabel>
-                  {teams.map((team) => (
+                  {tournaments.map((tournament) => (
                     <DropdownMenuItem
-                      key={team.name}
-                      onClick={() => setActiveTeam(team)}
+                      key={tournament.name}
+                      onClick={() => setActiveTournament(tournament)}
                       className="gap-2 p-2"
                     >
                       <div className="flex size-6 items-center justify-center rounded-sm border">
                         <Trophy className="size-4 shrink-0" />
                       </div>
-                      {team.name}
+                      {tournament.name}
                     </DropdownMenuItem>
                   ))}
                   <DropdownMenuSeparator />

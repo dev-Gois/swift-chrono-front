@@ -1,6 +1,6 @@
 "use client"
 
-import { NavProjects } from  "./nav-projects"
+import { NavSections } from "./nav-sections"
 import { NavUser } from "./nav-user"
 import { TeamSwitcher } from "./team-switcher"
 import {
@@ -24,10 +24,10 @@ export function AppSidebar({ setIsModalOpen, ...props }: AppSidebarProps) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={tournaments} activeTeam={currentTournament} setActiveTeam={setCurrentTournament} setIsModalOpen={setIsModalOpen} />
+        <TeamSwitcher tournaments={tournaments} activeTournament={currentTournament} setActiveTournament={setCurrentTournament} setIsModalOpen={setIsModalOpen} />
       </SidebarHeader>
       <SidebarContent>
-        <NavProjects />
+        <NavSections currentTournament={currentTournament} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={user} logout={logout} />

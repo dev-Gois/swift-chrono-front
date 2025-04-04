@@ -5,4 +5,4 @@ export const loginSchema = z.object({
   password: z.string().nonempty({ message: 'Senha é obrigatória' }),
 });
 
-export type LoginFormValues = z.infer<typeof loginSchema>;
+export type LoginFormValues = z.infer<typeof loginSchema>;  
