@@ -26,11 +26,7 @@ import { useCategoriesStore } from "@/stores/categories"
 import { useFetchCategories } from "@/services/useCategories"
 import { Loading } from "@/components/Loading"
 import { useCreateCategory, useUpdateCategory, useDeleteCategory } from "@/services/useCategories"
-
-interface Category {
-  id: string
-  name: string
-}
+import { Category } from "./types"
 
 export const Categories = () => {
   const { categories } = useCategoriesStore()
@@ -38,6 +34,7 @@ export const Categories = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
   const [newCategoryName, setNewCategoryName] = useState("")
+  const [newCategoryLaps, setNewCategoryLaps] = useState(1)
   const { toast } = useToast()
   const { mutate: createCategory, isPending: isCreating } = useCreateCategory()
   const { mutate: updateCategory, isPending: isUpdating } = useUpdateCategory()
@@ -49,7 +46,7 @@ export const Categories = () => {
     if (!newCategoryName.trim()) return
 
     createCategory(
-      { category: { name: newCategoryName } },
+      { category: { name: newCategoryName, laps: newCategoryLaps } },
       {
         onSuccess: () => {
           setNewCategoryName("")
@@ -76,7 +73,7 @@ export const Categories = () => {
     updateCategory(
       { 
         id: selectedCategory.id,
-        category: { name: newCategoryName }
+        category: { name: newCategoryName, laps: newCategoryLaps }
       },
       {
         onSuccess: () => {
@@ -155,6 +152,15 @@ export const Categories = () => {
                       placeholder="Digite o nome da categoria"
                     />
                   </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="laps">Voltas</Label>
+                    <Input
+                      id="laps"
+                      value={newCategoryLaps}
+                      onChange={(e) => setNewCategoryLaps(Number(e.target.value))}
+                      placeholder="Digite o número de voltas"
+                    />
+                  </div>
                 </div>
                 <DialogFooter>
                   <Button variant="outline" onClick={() => setIsCreateModalOpen(false)}>
@@ -178,6 +184,7 @@ export const Categories = () => {
                   <TableRow>
                     <TableHead className="w-[100px]">ID</TableHead>
                     <TableHead>Nome</TableHead>
+                    <TableHead>Voltas</TableHead>
                     <TableHead className="w-[100px] text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
@@ -186,6 +193,7 @@ export const Categories = () => {
                     <TableRow key={category.id}>
                       <TableCell className="font-medium">{category.id}</TableCell>
                       <TableCell>{category.name}</TableCell>
+                      <TableCell>{category.laps}</TableCell>
                       <TableCell>
                         <div className="flex items-center justify-end gap-2">
                           <Dialog
@@ -221,6 +229,15 @@ export const Categories = () => {
                                     value={newCategoryName}
                                     onChange={(e) => setNewCategoryName(e.target.value)}
                                     placeholder="Digite o nome da categoria"
+                                  />
+                                </div>
+                                <div className="grid gap-2">
+                                  <Label htmlFor="edit-laps">Voltas</Label>
+                                  <Input
+                                    id="edit-laps"
+                                    value={newCategoryLaps}
+                                    onChange={(e) => setNewCategoryLaps(Number(e.target.value))}
+                                    placeholder="Digite o número de voltas"
                                   />
                                 </div>
                               </div>

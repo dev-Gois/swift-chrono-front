@@ -52,7 +52,7 @@ export const useUpdateCategory = () => {
   const { currentTournament } = useTournamentStore((state) => state)
   const queryClient = useQueryClient()
 
-  return useMutation<CategoryResponse, ErrorResponse, { id: string; category: { name: string } }>({
+  return useMutation<CategoryResponse, ErrorResponse, CategoryRequest>({
     mutationFn: async ({ id, category }) => {
       if (!currentTournament) {
         throw new Error("Torneio não encontrado")

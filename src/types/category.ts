@@ -7,9 +7,10 @@ interface Category {
 type CategoryResponse = Category
 
 type CategoryRequest = {
-  id?: string;
+  id: string;
   category: {
     name: string;
+    laps: number;
   }
 }
 

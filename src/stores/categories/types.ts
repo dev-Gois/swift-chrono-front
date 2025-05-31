@@ -7,4 +7,5 @@ interface Category {
   id: string
   name: string
   tournament_id: string
+  laps: number
 }
