@@ -10,7 +10,6 @@ type TournamentRequest = {
   id: string;
   tournament: {
     name: string;
-    tournament_type: "sprint" | "laps";
   }
 }
 

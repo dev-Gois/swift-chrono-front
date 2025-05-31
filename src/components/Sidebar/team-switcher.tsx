@@ -16,7 +16,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import useTournamentType from "@/hooks/useTournamentType"
 
 import { Tournament } from "@/stores/tournaments/types"
 
@@ -46,7 +45,7 @@ export function TeamSwitcher({ tournaments, activeTournament, setActiveTournamen
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
                     <span className="truncate font-semibold">{activeTournament.name}</span>
-                    <span className="truncate text-xs">{useTournamentType(activeTournament.tournament_type)}</span>
+                    <span className="truncate text-xs">-</span>
                   </div>
                 </>
               ) : (
