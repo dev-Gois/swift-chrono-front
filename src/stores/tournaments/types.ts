@@ -8,4 +8,5 @@ export interface TournamentState {
 export interface Tournament {
   id: string
   name: string
+  tournament_type: "sprint" | "laps"
 }

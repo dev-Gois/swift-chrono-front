@@ -52,14 +52,14 @@ export function NavSections({ currentTournament }: { currentTournament: Tourname
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
-        <SidebarMenuItem>
+        {/* <SidebarMenuItem>
           <SidebarMenuButton asChild>
             <Link to="/dashboard/courses" className="w-full" aria-disabled={!currentTournament}>
               <LandPlot />
               <span>Percursos</span>
             </Link>
           </SidebarMenuButton>
-        </SidebarMenuItem>
+        </SidebarMenuItem> */}
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
             <Link to="/dashboard/categories" className="w-full" aria-disabled={!currentTournament}>
