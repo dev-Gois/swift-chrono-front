@@ -21,11 +21,7 @@ export const useFetchAthletes = () => {
   return useQuery({
     queryKey: ["athletes", currentTournament.id],
     queryFn: async () => {
-      const response = await api.get(COLLECTION_ATHLETES_ROUTE(), {
-        params: {
-          tournament_id: currentTournament.id,
-        },
-      })
+      const response = await api.get(COLLECTION_ATHLETES_ROUTE(currentTournament.id))
       setAthletes(response.data)
       return response.data
     },
@@ -39,7 +35,10 @@ export const useCreateAthlete = () => {
 
   return useMutation<AthleteResponse, ErrorResponse, AthleteRequest>({
     mutationFn: async (data: AthleteRequest) => {
-      const response = await api.post(COLLECTION_ATHLETES_ROUTE(), data)
+      if (!currentTournament) {
+        throw new Error("Torneio não selecionado")
+      }
+      const response = await api.post(COLLECTION_ATHLETES_ROUTE(currentTournament.id), data)
       setAthletes(response.data)
       return response.data
     },
@@ -55,10 +54,13 @@ export const useUpdateAthlete = () => {
 
   return useMutation<AthleteResponse, ErrorResponse, AthleteRequest>({
     mutationFn: async (data: AthleteRequest) => {
+      if (!currentTournament) {
+        throw new Error("Torneio não selecionado")
+      }
       if (!data.id) {
         throw new Error("ID do atleta não encontrado")
       }
-      const response = await api.put(MEMBER_ATHLETES_ROUTE(data.id), data)
+      const response = await api.put(MEMBER_ATHLETES_ROUTE(currentTournament.id, data.id), data)
       return response.data
     },
     onSuccess: () => {
@@ -73,7 +75,10 @@ export const useDeleteAthlete = () => {
 
   return useMutation<void, ErrorResponse, string>({
     mutationFn: async (id: string) => {
-      await api.delete(MEMBER_ATHLETES_ROUTE(id))
+      if (!currentTournament) {
+        throw new Error("Torneio não selecionado")
+      }
+      await api.delete(MEMBER_ATHLETES_ROUTE(currentTournament.id, id))
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["athletes", currentTournament?.id] })

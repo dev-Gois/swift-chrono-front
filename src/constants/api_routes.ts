@@ -10,6 +10,6 @@ export const COLLECTION_CATEGORIES_ROUTE = (tournamentId: string) => `${COLLECTI
 
 export const MEMBER_CATEGORIES_ROUTE = (tournamentId: string, categoryId: string) => `${COLLECTION_CATEGORIES_ROUTE(tournamentId)}/${categoryId}`;
 
-export const COLLECTION_ATHLETES_ROUTE = () => `/athletes`;
+export const COLLECTION_ATHLETES_ROUTE = (tournamentId: string) => `${COLLECTION_TOURNAMENTS_ROUTE}/${tournamentId}/athletes`;
 
-export const MEMBER_ATHLETES_ROUTE = (id: string) => `${COLLECTION_ATHLETES_ROUTE()}/${id}`;
+export const MEMBER_ATHLETES_ROUTE = (tournamentId: string, athleteId: string) => `${COLLECTION_ATHLETES_ROUTE(tournamentId)}/${athleteId}`;
