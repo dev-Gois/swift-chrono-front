@@ -1,7 +1,7 @@
 import { useAthletesStore } from "@/stores/athletes"
 import { useTournamentStore } from "@/stores/tournaments"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { COLLECTION_ATHLETES_ROUTE, MEMBER_ATHLETES_ROUTE } from "@/constants/api_routes"
+import { COLLECTION_ATHLETES_ROUTE, MEMBER_ATHLETES_ROUTE, IMPORT_ATHLETES_CSV_ROUTE } from "@/constants/api_routes"
 import { api } from "@/hooks/axios"
 import { AthleteRequest, AthleteResponse } from "@/types/athlete"
 import { ErrorResponse } from "@/types/request"
@@ -79,6 +79,31 @@ export const useDeleteAthlete = () => {
         throw new Error("Torneio não selecionado")
       }
       await api.delete(MEMBER_ATHLETES_ROUTE(currentTournament.id, id))
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["athletes", currentTournament?.id] })
+    },
+  })
+}
+
+export const useImportAthletesCSV = () => {
+  const { currentTournament } = useTournamentStore((state) => state)
+  const queryClient = useQueryClient()
+
+  return useMutation<void, ErrorResponse, File>({
+    mutationFn: async (file: File) => {
+      if (!currentTournament) {
+        throw new Error("Torneio não selecionado")
+      }
+      
+      const formData = new FormData()
+      formData.append("file", file)
+      
+      await api.post(IMPORT_ATHLETES_CSV_ROUTE(currentTournament.id), formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["athletes", currentTournament?.id] })

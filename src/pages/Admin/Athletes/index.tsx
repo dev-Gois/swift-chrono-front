@@ -26,7 +26,7 @@ import {
 } from "@/components/ui/select"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Plus, Pencil, Trash2 } from "lucide-react"
+import { Plus, Pencil, Trash2, Upload } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
 import { useAthletesStore } from "@/stores/athletes"
@@ -34,7 +34,7 @@ import { useCategoriesStore } from "@/stores/categories"
 import { useFetchAthletes } from "@/services/useAthletes"
 import { useFetchCategories } from "@/services/useCategories"
 import { Loading } from "@/components/Loading"
-import { useCreateAthlete, useUpdateAthlete, useDeleteAthlete } from "@/services/useAthletes"
+import { useCreateAthlete, useUpdateAthlete, useDeleteAthlete, useImportAthletesCSV } from "@/services/useAthletes"
 
 interface Athlete {
   id: string
@@ -48,7 +48,9 @@ export const Athletes = () => {
   const { categories } = useCategoriesStore()
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false)
   const [selectedAthlete, setSelectedAthlete] = useState<Athlete | null>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [formData, setFormData] = useState({
     name: "",
     plate: "",
@@ -58,6 +60,7 @@ export const Athletes = () => {
   const { mutate: createAthlete, isPending: isCreating } = useCreateAthlete()
   const { mutate: updateAthlete, isPending: isUpdating } = useUpdateAthlete()
   const { mutate: deleteAthlete, isPending: isDeleting } = useDeleteAthlete()
+  const { mutate: importAthletesCSV, isPending: isImporting } = useImportAthletesCSV()
 
   const { isLoading: isLoadingAthletes } = useFetchAthletes()
   const { isLoading: isLoadingCategories } = useFetchCategories()
@@ -68,6 +71,10 @@ export const Athletes = () => {
       plate: "",
       category_id: ""
     })
+  }
+
+  const resetImportForm = () => {
+    setSelectedFile(null)
   }
 
   const handleCreate = () => {
@@ -145,6 +152,41 @@ export const Athletes = () => {
     })
   }
 
+  const handleImportCSV = () => {
+    if (!selectedFile) return
+
+    importAthletesCSV(selectedFile, {
+      onSuccess: () => {
+        resetImportForm()
+        setIsImportModalOpen(false)
+        toast({
+          title: "Sucesso!",
+          description: "Atletas importados com sucesso.",
+        })
+      },
+      onError: () => {
+        toast({
+          title: "Erro!",
+          description: "Erro ao importar atletas.",
+          variant: "destructive",
+        })
+      }
+    })
+  }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file && file.type === "text/csv") {
+      setSelectedFile(file)
+    } else {
+      toast({
+        title: "Erro!",
+        description: "Por favor, selecione um arquivo CSV válido.",
+        variant: "destructive",
+      })
+    }
+  }
+
   const isLoading = isLoadingAthletes || isLoadingCategories
 
   return (
@@ -158,71 +200,118 @@ export const Athletes = () => {
                 Gerencie os atletas do torneio.
               </p>
             </div>
-            <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Novo Atleta
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Criar Novo Atleta</DialogTitle>
-                  <DialogDescription>
-                    Adicione um novo atleta ao torneio.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="name">Nome</Label>
-                    <Input
-                      id="name"
-                      value={formData.name}
-                      onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
-                      placeholder="Digite o nome do atleta"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="plate">Placa</Label>
-                    <Input
-                      id="plate"
-                      value={formData.plate}
-                      onChange={(e) => setFormData(prev => ({ ...prev, plate: e.target.value }))}
-                      placeholder="Digite o número da placa"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="category">Categoria</Label>
-                    <Select
-                      value={formData.category_id}
-                      onValueChange={(value) => setFormData(prev => ({ ...prev, category_id: value }))}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Selecione uma categoria" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {Array.isArray(categories) && categories.map((category) => (
-                          <SelectItem key={category.id} value={category.id}>
-                            {category.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => {
-                    resetForm()
-                    setIsCreateModalOpen(false)
-                  }}>
-                    Cancelar
+            <div className="flex gap-2">
+              <Dialog open={isImportModalOpen} onOpenChange={setIsImportModalOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline">
+                    <Upload className="mr-2 h-4 w-4" />
+                    Importar CSV
                   </Button>
-                  <Button onClick={handleCreate} disabled={isCreating}>
-                    {isCreating ? "Criando..." : "Criar"}
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Importar Atletas via CSV</DialogTitle>
+                    <DialogDescription>
+                      Selecione um arquivo CSV para importar atletas em lote.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="csv-file">Arquivo CSV</Label>
+                      <Input
+                        id="csv-file"
+                        type="file"
+                        accept=".csv"
+                        onChange={handleFileChange}
+                        placeholder="Selecione um arquivo CSV"
+                      />
+                    </div>
+                    {selectedFile && (
+                      <div className="text-sm text-muted-foreground">
+                        Arquivo selecionado: {selectedFile.name}
+                      </div>
+                    )}
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => {
+                      resetImportForm()
+                      setIsImportModalOpen(false)
+                    }}>
+                      Cancelar
+                    </Button>
+                    <Button onClick={handleImportCSV} disabled={isImporting || !selectedFile}>
+                      {isImporting ? "Importando..." : "Importar"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Novo Atleta
                   </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Criar Novo Atleta</DialogTitle>
+                    <DialogDescription>
+                      Adicione um novo atleta ao torneio.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="name">Nome</Label>
+                      <Input
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+                        placeholder="Digite o nome do atleta"
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="plate">Placa</Label>
+                      <Input
+                        id="plate"
+                        value={formData.plate}
+                        onChange={(e) => setFormData(prev => ({ ...prev, plate: e.target.value }))}
+                        placeholder="Digite o número da placa"
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="category">Categoria</Label>
+                      <Select
+                        value={formData.category_id}
+                        onValueChange={(value) => setFormData(prev => ({ ...prev, category_id: value }))}
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Selecione uma categoria" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {Array.isArray(categories) && categories.map((category) => (
+                            <SelectItem key={category.id} value={category.id}>
+                              {category.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => {
+                      resetForm()
+                      setIsCreateModalOpen(false)
+                    }}>
+                      Cancelar
+                    </Button>
+                    <Button onClick={handleCreate} disabled={isCreating}>
+                      {isCreating ? "Criando..." : "Criar"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
           <div className="rounded-md border overflow-x-auto">
             {isLoading ? (

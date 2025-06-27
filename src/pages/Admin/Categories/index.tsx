@@ -19,28 +19,35 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Plus, Pencil, Trash2 } from "lucide-react"
+import { Plus, Pencil, Trash2, Upload } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
 import { useCategoriesStore } from "@/stores/categories"
 import { useFetchCategories } from "@/services/useCategories"
 import { Loading } from "@/components/Loading"
-import { useCreateCategory, useUpdateCategory, useDeleteCategory } from "@/services/useCategories"
+import { useCreateCategory, useUpdateCategory, useDeleteCategory, useImportCategoriesCSV } from "@/services/useCategories"
 import { Category } from "./types"
 
 export const Categories = () => {
   const { categories } = useCategoriesStore()
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
+  const [isImportModalOpen, setIsImportModalOpen] = useState(false)
   const [selectedCategory, setSelectedCategory] = useState<Category | null>(null)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
   const [newCategoryName, setNewCategoryName] = useState("")
   const [newCategoryLaps, setNewCategoryLaps] = useState(1)
   const { toast } = useToast()
   const { mutate: createCategory, isPending: isCreating } = useCreateCategory()
   const { mutate: updateCategory, isPending: isUpdating } = useUpdateCategory()
   const { mutate: deleteCategory, isPending: isDeleting } = useDeleteCategory()
+  const { mutate: importCategoriesCSV, isPending: isImporting } = useImportCategoriesCSV()
 
   const { isLoading } = useFetchCategories()
+
+  const resetImportForm = () => {
+    setSelectedFile(null)
+  }
 
   const handleCreate = () => {
     if (!newCategoryName.trim()) return
@@ -117,6 +124,41 @@ export const Categories = () => {
     })
   }
 
+  const handleImportCSV = () => {
+    if (!selectedFile) return
+
+    importCategoriesCSV(selectedFile, {
+      onSuccess: () => {
+        resetImportForm()
+        setIsImportModalOpen(false)
+        toast({
+          title: "Sucesso!",
+          description: "Categorias importadas com sucesso.",
+        })
+      },
+      onError: () => {
+        toast({
+          title: "Erro!",
+          description: "Erro ao importar categorias.",
+          variant: "destructive",
+        })
+      }
+    })
+  }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0]
+    if (file && file.type === "text/csv") {
+      setSelectedFile(file)
+    } else {
+      toast({
+        title: "Erro!",
+        description: "Por favor, selecione um arquivo CSV válido.",
+        variant: "destructive",
+      })
+    }
+  }
+
   return (
     <div className="h-full overflow-hidden">
       <div className="h-full overflow-y-auto">
@@ -128,50 +170,97 @@ export const Categories = () => {
                 Gerencie as categorias do torneio.
               </p>
             </div>
-            <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
-              <DialogTrigger asChild>
-                <Button>
-                  <Plus className="mr-2 h-4 w-4" />
-                  Nova Categoria
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Criar Nova Categoria</DialogTitle>
-                  <DialogDescription>
-                    Adicione uma nova categoria ao torneio.
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="grid gap-4 py-4">
-                  <div className="grid gap-2">
-                    <Label htmlFor="name">Nome</Label>
-                    <Input
-                      id="name"
-                      value={newCategoryName}
-                      onChange={(e) => setNewCategoryName(e.target.value)}
-                      placeholder="Digite o nome da categoria"
-                    />
-                  </div>
-                  <div className="grid gap-2">
-                    <Label htmlFor="laps">Voltas</Label>
-                    <Input
-                      id="laps"
-                      value={newCategoryLaps}
-                      onChange={(e) => setNewCategoryLaps(Number(e.target.value))}
-                      placeholder="Digite o número de voltas"
-                    />
-                  </div>
-                </div>
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setIsCreateModalOpen(false)}>
-                    Cancelar
+            <div className="flex gap-2">
+              <Dialog open={isImportModalOpen} onOpenChange={setIsImportModalOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="outline">
+                    <Upload className="mr-2 h-4 w-4" />
+                    Importar CSV
                   </Button>
-                  <Button onClick={handleCreate} disabled={isCreating}>
-                    {isCreating ? "Criando..." : "Criar"}
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Importar Categorias via CSV</DialogTitle>
+                    <DialogDescription>
+                      Selecione um arquivo CSV para importar categorias em lote.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="csv-file">Arquivo CSV</Label>
+                      <Input
+                        id="csv-file"
+                        type="file"
+                        accept=".csv"
+                        onChange={handleFileChange}
+                        placeholder="Selecione um arquivo CSV"
+                      />
+                    </div>
+                    {selectedFile && (
+                      <div className="text-sm text-muted-foreground">
+                        Arquivo selecionado: {selectedFile.name}
+                      </div>
+                    )}
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => {
+                      resetImportForm()
+                      setIsImportModalOpen(false)
+                    }}>
+                      Cancelar
+                    </Button>
+                    <Button onClick={handleImportCSV} disabled={isImporting || !selectedFile}>
+                      {isImporting ? "Importando..." : "Importar"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+
+              <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
+                <DialogTrigger asChild>
+                  <Button>
+                    <Plus className="mr-2 h-4 w-4" />
+                    Nova Categoria
                   </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Criar Nova Categoria</DialogTitle>
+                    <DialogDescription>
+                      Adicione uma nova categoria ao torneio.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="name">Nome</Label>
+                      <Input
+                        id="name"
+                        value={newCategoryName}
+                        onChange={(e) => setNewCategoryName(e.target.value)}
+                        placeholder="Digite o nome da categoria"
+                      />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="laps">Voltas</Label>
+                      <Input
+                        id="laps"
+                        value={newCategoryLaps}
+                        onChange={(e) => setNewCategoryLaps(Number(e.target.value))}
+                        placeholder="Digite o número de voltas"
+                      />
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button variant="outline" onClick={() => setIsCreateModalOpen(false)}>
+                      Cancelar
+                    </Button>
+                    <Button onClick={handleCreate} disabled={isCreating}>
+                      {isCreating ? "Criando..." : "Criar"}
+                    </Button>
+                  </DialogFooter>
+                </DialogContent>
+              </Dialog>
+            </div>
           </div>
           <div className="rounded-md border overflow-x-auto">
             {isLoading ? (

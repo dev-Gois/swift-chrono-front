@@ -1,7 +1,7 @@
 import { useCategoriesStore } from "@/stores/categories"
 import { useTournamentStore } from "@/stores/tournaments"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { COLLECTION_CATEGORIES_ROUTE, MEMBER_CATEGORIES_ROUTE } from "@/constants/api_routes"
+import { COLLECTION_CATEGORIES_ROUTE, MEMBER_CATEGORIES_ROUTE, IMPORT_CATEGORIES_CSV_ROUTE } from "@/constants/api_routes"
 import { api } from "@/hooks/axios"
 import { CategoryRequest, CategoryResponse } from "@/types/category"
 import { ErrorResponse } from "@/types/request"
@@ -80,6 +80,31 @@ export const useDeleteCategory = () => {
         throw new Error("ID da categoria não encontrado")
       }
       await api.delete(MEMBER_CATEGORIES_ROUTE(currentTournament.id, id))
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories", currentTournament?.id] })
+    },
+  })
+}
+
+export const useImportCategoriesCSV = () => {
+  const { currentTournament } = useTournamentStore((state) => state)
+  const queryClient = useQueryClient()
+
+  return useMutation<void, ErrorResponse, File>({
+    mutationFn: async (file: File) => {
+      if (!currentTournament) {
+        throw new Error("Torneio não selecionado")
+      }
+      
+      const formData = new FormData()
+      formData.append("file", file)
+      
+      await api.post(IMPORT_CATEGORIES_CSV_ROUTE(currentTournament.id), formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories", currentTournament?.id] })
