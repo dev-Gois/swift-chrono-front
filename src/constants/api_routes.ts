@@ -17,3 +17,7 @@ export const COLLECTION_ATHLETES_ROUTE = (tournamentId: string) => `${COLLECTION
 export const MEMBER_ATHLETES_ROUTE = (tournamentId: string, athleteId: string) => `${COLLECTION_ATHLETES_ROUTE(tournamentId)}/${athleteId}`;
 
 export const IMPORT_ATHLETES_CSV_ROUTE = (tournamentId: string) => `${COLLECTION_ATHLETES_ROUTE(tournamentId)}/import_csv`;
+
+export const START_TOURNAMENT_ROUTE = (tournamentId: string) => `${COLLECTION_TOURNAMENTS_ROUTE}/${tournamentId}/start`;
+
+export const FINISH_TOURNAMENT_ROUTE = (tournamentId: string) => `${COLLECTION_TOURNAMENTS_ROUTE}/${tournamentId}/finish`;

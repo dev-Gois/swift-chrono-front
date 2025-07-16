@@ -1,9 +1,9 @@
 import { useTournamentStore } from "@/stores/tournaments"
 import { useAuthStore } from "@/stores/auth"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { COLLECTION_TOURNAMENTS_ROUTE, MEMBER_TOURNAMENTS_ROUTE } from "@/constants/api_routes"
+import { COLLECTION_TOURNAMENTS_ROUTE, FINISH_TOURNAMENT_ROUTE, MEMBER_TOURNAMENTS_ROUTE, START_TOURNAMENT_ROUTE } from "@/constants/api_routes"
 import { api } from "@/hooks/axios"
-import { useToast } from "@/hooks/use-toast"
+import { toast, useToast } from "@/hooks/use-toast"
 import { TournamentRequest, TournamentResponse } from "@/types/tournament"
 import { ErrorResponse } from "@/types/request"
 
@@ -19,6 +19,18 @@ export const useFetchTournaments = () => {
       return response.data
     },
     enabled: !!token
+  })
+}
+
+export const useFetchTournament = (id: string) => {
+  const { token } = useAuthStore()
+  return useQuery({
+    queryKey: ["tournament", id],
+    queryFn: async () => {
+      const response = await api.get(MEMBER_TOURNAMENTS_ROUTE(id))
+      return response.data
+    },
+    enabled: !!token && !!id
   })
 }
 
@@ -76,5 +88,59 @@ export const useUpdateTournament = () => {
       queryClient.invalidateQueries({ queryKey: ["tournaments"] })
       setCurrentTournament(data)
     },
+  })
+}
+
+export const useStartTournament = () => {
+  const queryClient = useQueryClient()
+  const { currentTournament } = useTournamentStore()
+  const { toast } = useToast()
+  
+  return useMutation({
+    mutationFn: async () => {
+      const response = await api.post(START_TOURNAMENT_ROUTE(currentTournament?.id as string))
+      return response.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tournament", currentTournament?.id] })
+      toast({
+        title: "Sucesso!",
+        description: "Torneio iniciado com sucesso."
+      })
+    },
+    onError: () => {
+      toast({
+        title: "Erro!",
+        description: "Erro ao iniciar torneio.",
+        variant: "destructive"
+      })
+    }
+  })
+}
+
+export const useFinishTournament = () => {
+  const queryClient = useQueryClient()
+  const { currentTournament } = useTournamentStore()
+  const { toast } = useToast()
+  
+  return useMutation({
+    mutationFn: async () => {
+      const response = await api.post(FINISH_TOURNAMENT_ROUTE(currentTournament?.id as string))
+      return response.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tournament", currentTournament?.id] })
+      toast({
+        title: "Sucesso!",
+        description: "Torneio finalizado com sucesso."
+      })
+    },
+    onError: () => {
+      toast({
+        title: "Erro!",
+        description: "Erro ao finalizar torneio.",
+        variant: "destructive"
+      })
+    }
   })
 }

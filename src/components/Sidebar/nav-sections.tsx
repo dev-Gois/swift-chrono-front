@@ -27,7 +27,7 @@ export function NavSections({ currentTournament }: { currentTournament: Tourname
       <SidebarMenu>
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
-            <Link to="/dashboard" className="w-full" aria-disabled={!currentTournament}>
+            <Link to="/dashboard/cronometer" className="w-full" aria-disabled={!currentTournament}>
               <Timer />
               <span>Cronometrar</span>
             </Link>

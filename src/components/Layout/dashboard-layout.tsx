@@ -26,7 +26,8 @@ const getBreadcrumbItems = (pathname: string) => {
       'courses': 'Percursos',
       'categories': 'Categorias',
       'settings': 'Configurações',
-      'ranking': 'Ranking'
+      'ranking': 'Ranking',
+      'cronometer': 'Cronometrar'
     };
 
     const title = titles[path] || path;
