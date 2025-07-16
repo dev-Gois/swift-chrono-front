@@ -6,7 +6,6 @@ import { AppProvider } from './providers/AppProvider';
 import { ProtectedRoute } from './components/ProtectedRoute';
 import { Dashboard } from './pages/Admin/Dashboard';
 import { Athletes } from './pages/Admin/Athletes';
-import { Courses } from './pages/Admin/Courses';
 import { Categories } from './pages/Admin/Categories';
 import Settings from './pages/Admin/Settings';
 import { Ranking } from './pages/Admin/Ranking';
@@ -28,7 +27,6 @@ function App() {
           }>
             <Route index element={<Dashboard />} />
             <Route path="athletes" element={<Athletes />} />
-            <Route path="courses" element={<Courses />} />
             <Route path="categories" element={<Categories />} />
             <Route path="settings" element={<Settings />} />
             <Route path="ranking" element={<Ranking />} />

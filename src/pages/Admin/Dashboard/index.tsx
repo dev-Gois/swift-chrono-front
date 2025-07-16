@@ -2,7 +2,6 @@ import { useState, useEffect, useRef } from "react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { ScrollArea } from "@/components/ui/scroll-area"
 import {
   Dialog,
   DialogContent,
@@ -14,8 +13,6 @@ import {
 import { useToast } from "@/hooks/use-toast"
 import { useAthletesStore } from "@/stores/athletes"
 import { Play, Pause, Square, Undo2, Send } from "lucide-react"
-import { format } from "date-fns"
-import { ptBR } from "date-fns/locale"
 import {
   Select,
   SelectContent,
