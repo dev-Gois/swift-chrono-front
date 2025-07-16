@@ -44,7 +44,7 @@ interface Athlete {
 }
 
 export const Athletes = () => {
-  const { athletes } = useAthletesStore()
+  // const { athletes } = useAthletesStore() // Removido para evitar conflito, usamos apenas a versão paginada
   const { categories } = useCategoriesStore()
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
@@ -62,8 +62,13 @@ export const Athletes = () => {
   const { mutate: deleteAthlete, isPending: isDeleting } = useDeleteAthlete()
   const { mutate: importAthletesCSV, isPending: isImporting } = useImportAthletesCSV()
 
-  const { isLoading: isLoadingAthletes } = useFetchAthletes()
+  const [page, setPage] = useState(1)
+  const itemsPerPage = 10
+  const { data: athletesPaginated, isLoading: isLoadingAthletes } = useFetchAthletes(page, itemsPerPage)
   const { isLoading: isLoadingCategories } = useFetchCategories()
+
+  const athletes = athletesPaginated?.athletes || []
+  const pagy = athletesPaginated?.pagy
 
   const resetForm = () => {
     setFormData({
@@ -457,6 +462,44 @@ export const Athletes = () => {
               </Table>
             )}
           </div>
+          {/* Navegador de Paginação */}
+          {pagy && (
+            <div className="flex justify-center items-center gap-2 mt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage(1)}
+                disabled={pagy.page === 1}
+              >
+                « Primeira
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => pagy.prev && setPage(pagy.prev)}
+                disabled={!pagy.prev}
+              >
+                ‹ Anterior
+              </Button>
+              <span className="px-2">Página {pagy.page} de {pagy.last}</span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => pagy.next && setPage(pagy.next)}
+                disabled={!pagy.next}
+              >
+                Próxima ›
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage(pagy.last)}
+                disabled={pagy.page === pagy.last}
+              >
+                Última »
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

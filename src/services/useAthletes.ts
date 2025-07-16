@@ -3,26 +3,28 @@ import { useTournamentStore } from "@/stores/tournaments"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { COLLECTION_ATHLETES_ROUTE, MEMBER_ATHLETES_ROUTE, IMPORT_ATHLETES_CSV_ROUTE } from "@/constants/api_routes"
 import { api } from "@/hooks/axios"
-import { AthleteRequest, AthleteResponse } from "@/types/athlete"
+import { AthleteRequest, AthleteResponse, AthletesPaginatedResponse } from "@/types/athlete"
 import { ErrorResponse } from "@/types/request"
 
-export const useFetchAthletes = () => {
+export const useFetchAthletes = (page: number = 1, items: number = 10) => {
   const setAthletes = useAthletesStore((state) => state.setAthletes)
   const { currentTournament } = useTournamentStore((state) => state)
 
   if (!currentTournament) {
     return {
-      data: [],
+      data: undefined,
       isLoading: false,
       error: null,
     }
   }
 
-  return useQuery({
-    queryKey: ["athletes", currentTournament.id],
+  return useQuery<AthletesPaginatedResponse>({
+    queryKey: ["athletes", currentTournament.id, page, items],
     queryFn: async () => {
-      const response = await api.get(COLLECTION_ATHLETES_ROUTE(currentTournament.id))
-      setAthletes(response.data)
+      const response = await api.get(
+        `${COLLECTION_ATHLETES_ROUTE(currentTournament.id)}?page=${page}&items=${items}`
+      )
+      setAthletes(response.data.athletes)
       return response.data
     },
   })
