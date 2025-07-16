@@ -3,6 +3,15 @@ import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useTournamentStore } from "@/stores/tournaments"
 import { useFetchTournament, useFinishTournament, useStartTournament } from "@/services/useTournaments"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
 
 export const Cronometer = () => {
   const { currentTournament } = useTournamentStore()
@@ -10,17 +19,21 @@ export const Cronometer = () => {
 
   const [isStarted, setIsStarted] = useState(false)
   const [isFinished, setIsFinished] = useState(false)
-
   const [time, setTime] = useState(0)
-
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
-  
-  const { mutate: startTournament } = useStartTournament()
+  const [isModalOpen, setIsModalOpen] = useState(false)
+  const [confirmationText, setConfirmationText] = useState("")
 
+  const { mutate: startTournament } = useStartTournament()
   const { mutate: finishTournament } = useFinishTournament()
 
   const handleFinish = () => {
+    setIsModalOpen(true)
+  }
+  const handleConfirmFinish = () => {
     finishTournament()
+    setIsModalOpen(false)
+    setConfirmationText("")
   }
 
   const handleStart = () => {
@@ -54,7 +67,6 @@ export const Cronometer = () => {
   useEffect(() => {
     if (tournament && tournament.started_at) {
       const startedAt = new Date(tournament.started_at)
-      
       if (tournament.finished_at) {
         const finishedAt = new Date(tournament.finished_at)
         const timeDiff = finishedAt.getTime() - startedAt.getTime()
@@ -63,7 +75,6 @@ export const Cronometer = () => {
         stopTimer()
         return
       }
-  
       const now = new Date()
       const timeDiff = now.getTime() - startedAt.getTime()
       setTime(timeDiff)
@@ -71,7 +82,6 @@ export const Cronometer = () => {
       startTimer()
     }
   }, [tournament])
-  
 
   return (
     <div className="h-full flex items-center justify-center">
@@ -92,6 +102,37 @@ export const Cronometer = () => {
           </div>
         </CardContent>
       </Card>
+      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Finalizar Prova</DialogTitle>
+            <DialogDescription>
+              Esta ação irá parar o cronômetro e finalizar o torneio.
+              Digite "FINALIZAR" para confirmar.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="grid gap-4 py-4">
+            <Input
+              placeholder='Digite "FINALIZAR"'
+              value={confirmationText}
+              onChange={(e) => setConfirmationText(e.target.value)}
+              className="text-lg text-center"
+            />
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setIsModalOpen(false)}>
+              Cancelar
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleConfirmFinish}
+              disabled={confirmationText !== "FINALIZAR"}
+            >
+              Finalizar Prova
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }   
