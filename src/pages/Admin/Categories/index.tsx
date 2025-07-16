@@ -23,13 +23,13 @@ import { Plus, Pencil, Trash2, Upload } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
 import { useCategoriesStore } from "@/stores/categories"
-import { useFetchCategories } from "@/services/useCategories"
+import { useFetchCategoriesPaginated } from "@/services/useCategories"
 import { Loading } from "@/components/Loading"
 import { useCreateCategory, useUpdateCategory, useDeleteCategory, useImportCategoriesCSV } from "@/services/useCategories"
 import { Category } from "./types"
 
 export const Categories = () => {
-  const { categories } = useCategoriesStore()
+  // Removido o uso do store, agora só usa a resposta paginada
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isImportModalOpen, setIsImportModalOpen] = useState(false)
@@ -43,7 +43,12 @@ export const Categories = () => {
   const { mutate: deleteCategory, isPending: isDeleting } = useDeleteCategory()
   const { mutate: importCategoriesCSV, isPending: isImporting } = useImportCategoriesCSV()
 
-  const { isLoading } = useFetchCategories()
+  const [page, setPage] = useState(1)
+  const itemsPerPage = 10
+  const { data: categoriesPaginated, isLoading } = useFetchCategoriesPaginated(page, itemsPerPage)
+
+  const categories = categoriesPaginated?.categories || []
+  const pagy = categoriesPaginated?.pagy
 
   const resetImportForm = () => {
     setSelectedFile(null)
@@ -380,6 +385,44 @@ export const Categories = () => {
               </Table>
             )}
           </div>
+          {/* Navegador de Paginação */}
+          {pagy && (
+            <div className="flex justify-center items-center gap-2 mt-4">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage(1)}
+                disabled={pagy.page === 1}
+              >
+                « Primeira
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => pagy.prev && setPage(pagy.prev)}
+                disabled={!pagy.prev}
+              >
+                ‹ Anterior
+              </Button>
+              <span className="px-2">Página {pagy.page} de {pagy.last}</span>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => pagy.next && setPage(pagy.next)}
+                disabled={!pagy.next}
+              >
+                Próxima ›
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage(pagy.last)}
+                disabled={pagy.page === pagy.last}
+              >
+                Última »
+              </Button>
+            </div>
+          )}
         </div>
       </div>
     </div>

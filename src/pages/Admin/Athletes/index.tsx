@@ -29,7 +29,6 @@ import { Label } from "@/components/ui/label"
 import { Plus, Pencil, Trash2, Upload } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
-import { useAthletesStore } from "@/stores/athletes"
 import { useCategoriesStore } from "@/stores/categories"
 import { useFetchAthletes } from "@/services/useAthletes"
 import { useFetchCategories } from "@/services/useCategories"
@@ -44,7 +43,6 @@ interface Athlete {
 }
 
 export const Athletes = () => {
-  // const { athletes } = useAthletesStore() // Removido para evitar conflito, usamos apenas a versão paginada
   const { categories } = useCategoriesStore()
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)

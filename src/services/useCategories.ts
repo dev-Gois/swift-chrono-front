@@ -111,3 +111,19 @@ export const useImportCategoriesCSV = () => {
     },
   })
 }
+
+export function useFetchCategoriesPaginated(page: number, limit: number) {
+  const { currentTournament } = useTournamentStore((state) => state)
+
+  return useQuery({
+    queryKey: ["categories-paginated", currentTournament?.id, page, limit],
+    queryFn: async () => {
+      if (!currentTournament) return { categories: [], pagy: null }
+      const response = await api.get(COLLECTION_CATEGORIES_ROUTE(currentTournament.id), {
+        params: { page, limit }
+      })
+      return response.data
+    },
+    enabled: !!currentTournament,
+  })
+}
