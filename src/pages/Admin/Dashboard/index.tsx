@@ -42,7 +42,6 @@ export const Dashboard = () => {
   const [arrivals, setArrivals] = useState<Arrival[]>([])
   const [isStopModalOpen, setIsStopModalOpen] = useState(false)
   const [isDsqModalOpen, setIsDsqModalOpen] = useState(false)
-  const [isManualTimeModalOpen, setIsManualTimeModalOpen] = useState(false)
   const [selectedArrival, setSelectedArrival] = useState<Arrival | null>(null)
   const [dsqReason, setDsqReason] = useState("")
   const [confirmationText, setConfirmationText] = useState("")
@@ -188,19 +187,6 @@ export const Dashboard = () => {
     setIsDsqModalOpen(false)
     setSelectedArrival(null)
     setDsqReason("")
-  }
-
-  const handleRemoveDisqualification = (arrival: Arrival) => {
-    setArrivals(prev => prev.map(a => 
-      a.id === arrival.id
-        ? { ...a, disqualified: false, disqualificationReason: undefined }
-        : a
-    ))
-
-    toast({
-      title: "Desclassificação removida",
-      description: `${arrival.athlete.name} teve sua desclassificação removida`,
-    })
   }
 
   const recentArrivals = arrivals.slice(0, 5)
