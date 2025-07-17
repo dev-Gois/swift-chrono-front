@@ -11,6 +11,8 @@ import Settings from './pages/Admin/Settings';
 import { AthleteLaps } from './pages/Admin/AthleteLaps';
 import { Cronometer } from './pages/Admin/Cronometer';
 import { Ranking } from './pages/Admin/Ranking';
+import { CategoryRanking } from './pages/Admin/CategoryRanking';
+
 function App() {
   useInitAuth()
 
@@ -33,6 +35,7 @@ function App() {
             <Route path="athlete-laps" element={<AthleteLaps />} />
             <Route path="cronometer" element={<Cronometer />} />
             <Route path="ranking" element={<Ranking />} />
+            <Route path="ranking/:categoryId" element={<CategoryRanking />} />
             </Route>
           <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>

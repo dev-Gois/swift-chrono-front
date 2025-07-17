@@ -29,3 +29,5 @@ export const COLLECTION_ATHLETE_LAPS_ROUTE = (tournamentId: string) => `${COLLEC
 export const LAST_FIVE_LAPS_ROUTE = (tournamentId: string) => `${COLLECTION_ATHLETE_LAPS_ROUTE(tournamentId)}/last_five_laps`;
 
 export const MEMBER_ATHLETE_LAPS_ROUTE = (tournamentId: string, athleteLapId: string) => `${COLLECTION_ATHLETE_LAPS_ROUTE(tournamentId)}/${athleteLapId}`;
+
+export const RANKING_ROUTE = (categoryId: string) => `/ranking/${categoryId}`;
