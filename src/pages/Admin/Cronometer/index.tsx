@@ -14,6 +14,7 @@ import {
 import { Input } from "@/components/ui/input"
 import { Bike, Ban } from "lucide-react"
 import { useCreateAthleteLap, useDeleteAthleteLap, useLastFiveLaps } from "@/services/useAthleteLaps"
+import { useCreateDisqualification, useDeleteDisqualification, useFetchLastFiveDisqualifications } from "@/services/useDisqualifications"
 
 export const Cronometer = () => {
   const { currentTournament } = useTournamentStore()
@@ -31,6 +32,10 @@ export const Cronometer = () => {
   const { mutate: createAthleteLap } = useCreateAthleteLap()
   const { data: lastFiveLaps } = useLastFiveLaps()
   const { mutate: deleteAthleteLap } = useDeleteAthleteLap()
+  const { mutate: createDisqualification } = useCreateDisqualification()
+  const { mutate: deleteDisqualification } = useDeleteDisqualification()
+  const { data: lastFiveDisqualifications } = useFetchLastFiveDisqualifications(currentTournament?.id as string)
+
   const handleFinish = () => {
     setIsModalOpen(true)
   }
@@ -195,26 +200,23 @@ export const Cronometer = () => {
                 <div className="mt-6">
                   <h3 className="text-lg font-semibold text-destructive mb-4">Atletas Desclassificados</h3>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-destructive/5 rounded-lg border border-destructive/20">
-                      <div className="flex items-center gap-3">
-                        <span className="font-mono text-sm bg-destructive/10 px-2 py-1 rounded">789</span>
-                        <span className="font-medium">Pedro Costa</span>
-                        <span className="text-sm text-muted-foreground">Corte de percurso</span>
+                    {lastFiveDisqualifications?.disqualifications?.map((disqualification: any) => (
+                      <div key={disqualification.id} className="flex items-center justify-between p-3 bg-destructive/5 rounded-lg border border-destructive/20">
+                        <div className="flex items-center gap-3">
+                          <span className="font-mono text-sm bg-destructive/10 px-2 py-1 rounded">{disqualification.plate}</span>
+                          <span className="font-medium">{disqualification.name}</span>
+                          <span className="text-sm text-muted-foreground">{disqualification.category}</span>
+                        </div>
+                        <Button variant="ghost" size="sm" className="text-primary hover:text-primary" onClick={() => deleteDisqualification(disqualification.id)}>
+                          Reverter
+                        </Button>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-primary hover:text-primary">
-                        Reverter
-                      </Button>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-destructive/5 rounded-lg border border-destructive/20">
-                      <div className="flex items-center gap-3">
-                        <span className="font-mono text-sm bg-destructive/10 px-2 py-1 rounded">321</span>
-                        <span className="font-medium">Ana Oliveira</span>
-                        <span className="text-sm text-muted-foreground">Auxílio externo</span>
+                    ))}
+                    {!lastFiveDisqualifications?.disqualifications?.length && (
+                      <div className="text-center text-muted-foreground py-4">
+                        Nenhum atleta desclassificado ainda
                       </div>
-                      <Button variant="ghost" size="sm" className="text-primary hover:text-primary">
-                        Reverter
-                      </Button>
-                    </div>
+                    )}
                   </div>
                 </div>
               </CardContent>

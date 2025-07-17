@@ -31,3 +31,9 @@ export const LAST_FIVE_LAPS_ROUTE = (tournamentId: string) => `${COLLECTION_ATHL
 export const MEMBER_ATHLETE_LAPS_ROUTE = (tournamentId: string, athleteLapId: string) => `${COLLECTION_ATHLETE_LAPS_ROUTE(tournamentId)}/${athleteLapId}`;
 
 export const RANKING_ROUTE = (categoryId: string) => `/ranking/${categoryId}`;
+
+export const COLLECTION_DISQUALIFICATIONS_ROUTE = (tournamentId: string) => `${COLLECTION_TOURNAMENTS_ROUTE}/${tournamentId}/disqualifications`;
+
+export const LAST_FIVE_DISQUALIFICATIONS_ROUTE = (tournamentId: string) => `${COLLECTION_DISQUALIFICATIONS_ROUTE(tournamentId)}/last_five_disqualifications`;
+
+export const MEMBER_DISQUALIFICATIONS_ROUTE = (tournamentId: string, disqualificationId: string) => `${COLLECTION_DISQUALIFICATIONS_ROUTE(tournamentId)}/${disqualificationId}`;
