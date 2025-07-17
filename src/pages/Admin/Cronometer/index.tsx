@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Bike, Ban } from "lucide-react"
-import { useCreateAthleteLap, useLastFiveLaps } from "@/services/useAthleteLaps"
+import { useCreateAthleteLap, useDeleteAthleteLap, useLastFiveLaps } from "@/services/useAthleteLaps"
 
 export const Cronometer = () => {
   const { currentTournament } = useTournamentStore()
@@ -30,7 +30,7 @@ export const Cronometer = () => {
   const { mutate: finishTournament } = useFinishTournament()
   const { mutate: createAthleteLap } = useCreateAthleteLap()
   const { data: lastFiveLaps } = useLastFiveLaps()
-
+  const { mutate: deleteAthleteLap } = useDeleteAthleteLap()
   const handleFinish = () => {
     setIsModalOpen(true)
   }
@@ -151,7 +151,7 @@ export const Cronometer = () => {
                           <span className="font-medium">{lap.attributes.athlete.attributes.name}</span>
                           <span className="font-mono text-sm text-muted-foreground">{lap.attributes.formatted_time}</span>
                         </div>
-                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
+                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive" onClick={() => deleteAthleteLap(lap.id)}>
                           Desfazer
                         </Button>
                       </div>
