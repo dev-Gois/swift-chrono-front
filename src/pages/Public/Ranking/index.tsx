@@ -1,8 +1,7 @@
 import { useParams, useNavigate } from "react-router-dom";
 import { useFetchRanking } from "@/services/useRanking";
 import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Trophy, Medal, Award, ArrowLeft, Clock, User, Hash, Building } from "lucide-react";
+import { Trophy, Medal, Award, ArrowLeft, Clock, Hash, Building } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export const PublicRanking = () => {
@@ -54,23 +53,25 @@ export const PublicRanking = () => {
       {/* Header */}
       <div className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
             <Button
               variant="ghost"
               onClick={() => navigate('/categories')}
-              className="flex items-center text-gray-600 hover:text-gray-900"
+              className="flex items-center text-gray-600 hover:text-gray-900 self-start"
             >
               <ArrowLeft className="h-5 w-5 mr-2" />
               Voltar às categorias
             </Button>
-            <div className="text-center flex-1">
+            
+            <div className="text-center md:flex-1">
               <div className="flex items-center justify-center mb-2">
-                <Trophy className="h-8 w-8 text-blue-600 mr-2" />
-                <h1 className="text-2xl font-bold text-gray-900">Ranking - {categoryName}</h1>
+                <Trophy className="h-6 w-6 sm:h-8 sm:w-8 text-blue-600 mr-2" />
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900">
+                  Ranking - {categoryName}
+                </h1>
               </div>
-              <p className="text-gray-600">Classificação atual dos atletas</p>
+              <p className="text-sm sm:text-base text-gray-600">Classificação atual dos atletas</p>
             </div>
-            <div className="w-32"></div> {/* Spacer para centralizar o título */}
           </div>
         </div>
       </div>
