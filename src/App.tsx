@@ -13,6 +13,8 @@ import { Cronometer } from './pages/Admin/Cronometer';
 import { Ranking } from './pages/Admin/Ranking';
 import { CategoryRanking } from './pages/Admin/CategoryRanking';
 import { Disqualifications } from './pages/Admin/Disqualifications';
+import { PublicCategories } from './pages/Public/Categories';
+import { PublicRanking } from './pages/Public/Ranking';
 
 function App() {
   useInitAuth()
@@ -21,7 +23,14 @@ function App() {
     <AppProvider>
       <Router>
         <Routes>
+          {/* Rotas públicas */}
+          <Route path="/categories" element={<PublicCategories />} />
+          <Route path="/ranking/:categoryId" element={<PublicRanking />} />
+          
+          {/* Rotas de autenticação */}
           <Route path="/login" element={<LoginPage />} />
+          
+          {/* Rotas protegidas do dashboard */}
           <Route path="/dashboard" element={
             <ProtectedRoute>
               <DashboardLayout>
@@ -39,7 +48,9 @@ function App() {
             <Route path="ranking/:categoryId" element={<CategoryRanking />} />
             <Route path="disqualifications" element={<Disqualifications />} />
           </Route>
-          <Route path="/" element={<Navigate to="/login" replace />} />
+          
+          {/* Rota padrão redireciona para categorias públicas */}
+          <Route path="/" element={<Navigate to="/categories" replace />} />
         </Routes>
       </Router>
     </AppProvider>
