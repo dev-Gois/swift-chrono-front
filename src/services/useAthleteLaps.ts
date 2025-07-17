@@ -31,7 +31,7 @@ export const useLastFiveLaps = () => {
   const { currentTournament } = useTournamentStore()
 
   return useQuery({
-    queryKey: ["athlete_laps"],
+    queryKey: ["last_five_laps"],
     queryFn: () => api.get(LAST_FIVE_LAPS_ROUTE(currentTournament?.id as string)).then((res) => res.data),
     enabled: !!currentTournament?.id
   })
@@ -41,7 +41,7 @@ export const useFetchAthleteLaps = (page: number = 1, items: number = 10) => {
   const { currentTournament } = useTournamentStore()
 
   return useQuery({
-    queryKey: ["athlete_laps"],
+    queryKey: ["athlete_laps", currentTournament?.id, page, items],
     queryFn: () => api.get(`${COLLECTION_ATHLETE_LAPS_ROUTE(currentTournament?.id as string)}?page=${page}&items=${items}`).then((res) => res.data),
     enabled: !!currentTournament?.id
   })
@@ -54,7 +54,7 @@ export const useDeleteAthleteLap = () => {
   return useMutation({
     mutationFn: (id: string) => api.delete(MEMBER_ATHLETE_LAPS_ROUTE(currentTournament?.id as string, id)),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["athlete_laps"] })
+      queryClient.invalidateQueries({ queryKey: ["last_five_laps", "athlete_laps"] })
       toast({
         title: "Sucesso!",
         description: "Volta deletada com sucesso."
