@@ -12,6 +12,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
+import { Bike, Ban } from "lucide-react"
 
 export const Cronometer = () => {
   const { currentTournament } = useTournamentStore()
@@ -84,10 +85,10 @@ export const Cronometer = () => {
   }, [tournament])
 
   return (
-    <div className="h-full flex items-center justify-center">
-      <Card className="w-full max-w-md mx-auto">
+    <div className="h-full flex flex-col items-center justify-start pt-12">
+      <Card className="w-full max-w-md mx-auto mb-8 shadow-xl border-2 border-primary">
         <CardHeader>
-          <CardTitle className="text-center text-5xl font-mono">
+          <CardTitle className="text-center text-5xl font-mono text-primary">
             {formatTime(time)}
           </CardTitle>
         </CardHeader>
@@ -102,6 +103,117 @@ export const Cronometer = () => {
           </div>
         </CardContent>
       </Card>
+      {/* Sections abaixo do cronômetro */}
+      <div className="w-full max-w-4xl flex flex-col md:flex-row gap-8">
+        {/* Section esquerda: Card de chegada de atleta */}
+        <section className="flex-1">
+          <div className="rounded-2xl shadow-2xl border-0 bg-gradient-to-br from-primary/10 via-background to-primary/5 p-1">
+            <Card className="rounded-2xl bg-white/90 dark:bg-zinc-900/80 shadow-none border-0">
+              <CardHeader className="pb-2 flex flex-row items-center gap-2">
+                <span className="inline-flex items-center justify-center rounded-full bg-primary/10 p-2 mr-2">
+                  <Bike className="w-6 h-6 text-primary" />
+                </span>
+                <CardTitle className="text-xl font-bold text-primary tracking-tight">Registrar Chegada</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form className="flex flex-col gap-6 px-2 py-2">
+                  <Input
+                    placeholder="Digite a placa do atleta"
+                    className="text-lg py-6 px-4 border-2 border-primary/40 focus:border-primary focus:ring-4 focus:ring-primary/30 rounded-xl transition-all duration-200 shadow-sm"
+                  />
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full font-semibold text-lg bg-gradient-to-r from-primary to-primary/80 hover:from-primary/80 hover:to-primary/60 shadow-lg transition-all duration-200"
+                  >
+                    Registrar
+                  </Button>
+                </form>
+                {/* Listagem de chegadas */}
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold text-primary mb-4">Chegadas Registradas</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 bg-primary/5 rounded-lg border border-primary/20">
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-sm bg-primary/10 px-2 py-1 rounded">123</span>
+                        <span className="font-medium">João Silva</span>
+                        <span className="font-mono text-sm text-muted-foreground">01:23:45.67</span>
+                      </div>
+                      <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
+                        Desfazer
+                      </Button>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-primary/5 rounded-lg border border-primary/20">
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-sm bg-primary/10 px-2 py-1 rounded">456</span>
+                        <span className="font-medium">Maria Santos</span>
+                        <span className="font-mono text-sm text-muted-foreground">01:45:32.12</span>
+                      </div>
+                      <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
+                        Desfazer
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+        {/* Section direita: Card de desclassificar atleta */}
+        <section className="flex-1">
+          <div className="rounded-2xl shadow-2xl border-0 bg-gradient-to-br from-destructive/10 via-background to-destructive/5 p-1">
+            <Card className="rounded-2xl bg-white/90 dark:bg-zinc-900/80 shadow-none border-0">
+              <CardHeader className="pb-2 flex flex-row items-center gap-2">
+                <span className="inline-flex items-center justify-center rounded-full bg-destructive/10 p-2 mr-2">
+                  <Ban className="w-6 h-6 text-destructive" />
+                </span>
+                <CardTitle className="text-xl font-bold text-destructive tracking-tight">Desclassificar Atleta</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form className="flex flex-col gap-6 px-2 py-2">
+                  <Input
+                    placeholder="Digite a placa do atleta"
+                    className="text-lg py-6 px-4 border-2 border-destructive/40 focus:border-destructive focus:ring-4 focus:ring-destructive/30 rounded-xl transition-all duration-200 shadow-sm"
+                  />
+                  <Button
+                    type="submit"
+                    size="lg"
+                    className="w-full font-semibold text-lg bg-gradient-to-r from-destructive to-destructive/80 hover:from-destructive/80 hover:to-destructive/60 shadow-lg transition-all duration-200"
+                  >
+                    Desclassificar
+                  </Button>
+                </form>
+                {/* Listagem de desclassificações */}
+                <div className="mt-6">
+                  <h3 className="text-lg font-semibold text-destructive mb-4">Atletas Desclassificados</h3>
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between p-3 bg-destructive/5 rounded-lg border border-destructive/20">
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-sm bg-destructive/10 px-2 py-1 rounded">789</span>
+                        <span className="font-medium">Pedro Costa</span>
+                        <span className="text-sm text-muted-foreground">Corte de percurso</span>
+                      </div>
+                      <Button variant="ghost" size="sm" className="text-primary hover:text-primary">
+                        Reverter
+                      </Button>
+                    </div>
+                    <div className="flex items-center justify-between p-3 bg-destructive/5 rounded-lg border border-destructive/20">
+                      <div className="flex items-center gap-3">
+                        <span className="font-mono text-sm bg-destructive/10 px-2 py-1 rounded">321</span>
+                        <span className="font-medium">Ana Oliveira</span>
+                        <span className="text-sm text-muted-foreground">Auxílio externo</span>
+                      </div>
+                      <Button variant="ghost" size="sm" className="text-primary hover:text-primary">
+                        Reverter
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </section>
+      </div>
       <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
         <DialogContent>
           <DialogHeader>
