@@ -13,6 +13,7 @@ export const useCreateAthleteLap = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["athlete_laps"] })
       queryClient.invalidateQueries({ queryKey: ["last_five_laps"] })
+      queryClient.invalidateQueries({ queryKey: ["ranking"] })
       toast({
         title: "Sucesso!",
         description: "Volta adicionada com sucesso."
@@ -57,6 +58,7 @@ export const useDeleteAthleteLap = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["last_five_laps"] })
       queryClient.invalidateQueries({ queryKey: ["athlete_laps"] })
+      queryClient.invalidateQueries({ queryKey: ["ranking"] })
       toast({
         title: "Sucesso!",
         description: "Volta deletada com sucesso."
