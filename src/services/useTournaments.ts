@@ -157,6 +157,10 @@ export const useResetTournament = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tournament", currentTournament?.id] })
+      queryClient.invalidateQueries({ queryKey: ["categories"] })
+      queryClient.invalidateQueries({ queryKey: ["athlete_laps"] })
+      queryClient.invalidateQueries({ queryKey: ["last_five_laps"] })
+      queryClient.invalidateQueries({ queryKey: ["ranking"] })
       toast({
         title: "Sucesso!",
         description: "Torneio resetado com sucesso."

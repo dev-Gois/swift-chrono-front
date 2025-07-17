@@ -12,6 +12,7 @@ export const useCreateAthleteLap = () => {
     mutationFn: (plate: string) => api.post(COLLECTION_ATHLETE_LAPS_ROUTE(currentTournament?.id as string), { plate }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["athlete_laps"] })
+      queryClient.invalidateQueries({ queryKey: ["last_five_laps"] })
       toast({
         title: "Sucesso!",
         description: "Volta adicionada com sucesso."
@@ -54,7 +55,8 @@ export const useDeleteAthleteLap = () => {
   return useMutation({
     mutationFn: (id: string) => api.delete(MEMBER_ATHLETE_LAPS_ROUTE(currentTournament?.id as string, id)),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["last_five_laps", "athlete_laps"] })
+      queryClient.invalidateQueries({ queryKey: ["last_five_laps"] })
+      queryClient.invalidateQueries({ queryKey: ["athlete_laps"] })
       toast({
         title: "Sucesso!",
         description: "Volta deletada com sucesso."
