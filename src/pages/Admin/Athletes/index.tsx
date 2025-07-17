@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Table,
@@ -52,7 +52,8 @@ export const Athletes = () => {
   const [formData, setFormData] = useState({
     name: "",
     plate: "",
-    category_id: ""
+    category_id: "",
+    team: ""
   })
   const { toast } = useToast()
   const { mutate: createAthlete, isPending: isCreating } = useCreateAthlete()
@@ -68,11 +69,16 @@ export const Athletes = () => {
   const athletes = athletesPaginated?.athletes || []
   const pagy = athletesPaginated?.pagy
 
+  useEffect(() => {
+    console.log(athletesPaginated)
+  }, [athletes])
+
   const resetForm = () => {
     setFormData({
       name: "",
       plate: "",
-      category_id: ""
+      category_id: "",
+      team: ""
     })
   }
 
@@ -283,6 +289,15 @@ export const Athletes = () => {
                       />
                     </div>
                     <div className="grid gap-2">
+                      <Label htmlFor="team">Equipe</Label>
+                      <Input
+                        id="team"
+                        value={formData.team}
+                        onChange={(e) => setFormData(prev => ({ ...prev, team: e.target.value }))}
+                        placeholder="Digite a equipe do atleta"
+                      />
+                    </div>
+                    <div className="grid gap-2">
                       <Label htmlFor="category">Categoria</Label>
                       <Select
                         value={formData.category_id}
@@ -328,18 +343,20 @@ export const Athletes = () => {
                     <TableHead className="w-[100px]">ID</TableHead>
                     <TableHead>Nome</TableHead>
                     <TableHead>Placa</TableHead>
+                    <TableHead>Equipe</TableHead>
                     <TableHead>Categoria</TableHead>
                     <TableHead className="w-[100px] text-right">Ações</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {Array.isArray(athletes) && athletes.map((athlete) => (
+                  {Array.isArray(athletes) && athletes.map((athlete: any) => (
                     <TableRow key={athlete.id}>
                       <TableCell className="font-medium">{athlete.id}</TableCell>
-                      <TableCell>{athlete.name}</TableCell>
-                      <TableCell>{athlete.plate}</TableCell>
+                      <TableCell>{athlete.attributes.name}</TableCell>
+                      <TableCell>{athlete.attributes.plate}</TableCell>
+                      <TableCell>{athlete.attributes.team}</TableCell>
                       <TableCell>
-                        {categories.find(c => c.id === athlete.category_id)?.name}
+                        {athlete.attributes.category.attributes.name}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center justify-end gap-2">
@@ -351,7 +368,8 @@ export const Athletes = () => {
                                 setFormData({
                                   name: athlete.name,
                                   plate: athlete.plate,
-                                  category_id: athlete.category_id
+                                  category_id: athlete.category_id,
+                                  team: athlete.team
                                 })
                               } else {
                                 setSelectedAthlete(null)

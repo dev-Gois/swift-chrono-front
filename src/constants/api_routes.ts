@@ -23,3 +23,7 @@ export const START_TOURNAMENT_ROUTE = (tournamentId: string) => `${COLLECTION_TO
 export const FINISH_TOURNAMENT_ROUTE = (tournamentId: string) => `${COLLECTION_TOURNAMENTS_ROUTE}/${tournamentId}/finish`;
 
 export const RESET_TOURNAMENT_ROUTE = (tournamentId: string) => `${COLLECTION_TOURNAMENTS_ROUTE}/${tournamentId}/reset`;
+
+export const COLLECTION_ATHLETE_LAPS_ROUTE = (tournamentId: string) => `${COLLECTION_TOURNAMENTS_ROUTE}/${tournamentId}/athlete_laps`;
+
+export const LAST_FIVE_LAPS_ROUTE = (tournamentId: string) => `${COLLECTION_ATHLETE_LAPS_ROUTE(tournamentId)}/last_five_laps`;

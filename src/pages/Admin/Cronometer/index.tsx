@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Bike, Ban } from "lucide-react"
+import { useCreateAthleteLap, useLastFiveLaps } from "@/services/useAthleteLaps"
 
 export const Cronometer = () => {
   const { currentTournament } = useTournamentStore()
@@ -24,9 +25,15 @@ export const Cronometer = () => {
   const intervalRef = useRef<NodeJS.Timeout | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [confirmationText, setConfirmationText] = useState("")
-
+  const [plate, setPlate] = useState("")
   const { mutate: startTournament } = useStartTournament()
   const { mutate: finishTournament } = useFinishTournament()
+  const { mutate: createAthleteLap } = useCreateAthleteLap()
+  const { data: lastFiveLaps, isLoading: isLoadingLastFiveLaps, isError: isErrorLastFiveLaps } = useLastFiveLaps()
+
+  useEffect(() => {
+    console.log(lastFiveLaps?.laps?.data)
+  }, [lastFiveLaps])
 
   const handleFinish = () => {
     setIsModalOpen(true)
@@ -39,6 +46,13 @@ export const Cronometer = () => {
 
   const handleStart = () => {
     startTournament()
+  }
+  
+  const handleCreateAthleteLap = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!plate) return
+    createAthleteLap(plate)
+    setPlate("")
   }
 
   const formatTime = (ms: number) => {
@@ -116,10 +130,11 @@ export const Cronometer = () => {
                 <CardTitle className="text-xl font-bold text-primary tracking-tight">Registrar Chegada</CardTitle>
               </CardHeader>
               <CardContent>
-                <form className="flex flex-col gap-6 px-2 py-2">
+                <form onSubmit={handleCreateAthleteLap} className="flex flex-col gap-6 px-2 py-2">
                   <Input
                     placeholder="Digite a placa do atleta"
                     className="text-lg py-6 px-4 border-2 border-primary/40 focus:border-primary focus:ring-4 focus:ring-primary/30 rounded-xl transition-all duration-200 shadow-sm"
+                    onChange={(e) => setPlate(e.target.value)}
                   />
                   <Button
                     type="submit"
@@ -133,26 +148,23 @@ export const Cronometer = () => {
                 <div className="mt-6">
                   <h3 className="text-lg font-semibold text-primary mb-4">Chegadas Registradas</h3>
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-primary/5 rounded-lg border border-primary/20">
-                      <div className="flex items-center gap-3">
-                        <span className="font-mono text-sm bg-primary/10 px-2 py-1 rounded">123</span>
-                        <span className="font-medium">João Silva</span>
-                        <span className="font-mono text-sm text-muted-foreground">01:23:45.67</span>
+                  {lastFiveLaps?.laps?.data?.map((lap: any) => (
+                      <div key={lap.id} className="flex items-center justify-between p-3 bg-primary/5 rounded-lg border border-primary/20">
+                        <div className="flex items-center gap-3">
+                          <span className="font-mono text-sm bg-primary/10 px-2 py-1 rounded">{lap.attributes.athlete.attributes.plate}</span>
+                          <span className="font-medium">{lap.attributes.athlete.attributes.name}</span>
+                          <span className="font-mono text-sm text-muted-foreground">{lap.attributes.formatted_time}</span>
+                        </div>
+                        <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
+                          Desfazer
+                        </Button>
                       </div>
-                      <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
-                        Desfazer
-                      </Button>
-                    </div>
-                    <div className="flex items-center justify-between p-3 bg-primary/5 rounded-lg border border-primary/20">
-                      <div className="flex items-center gap-3">
-                        <span className="font-mono text-sm bg-primary/10 px-2 py-1 rounded">456</span>
-                        <span className="font-medium">Maria Santos</span>
-                        <span className="font-mono text-sm text-muted-foreground">01:45:32.12</span>
+                    ))}
+                    {!lastFiveLaps?.laps?.data?.length && (
+                      <div className="text-center text-muted-foreground py-4">
+                        Nenhuma volta registrada ainda
                       </div>
-                      <Button variant="ghost" size="sm" className="text-destructive hover:text-destructive">
-                        Desfazer
-                      </Button>
-                    </div>
+                    )}
                   </div>
                 </div>
               </CardContent>
