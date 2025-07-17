@@ -157,6 +157,8 @@ export const useResetTournament = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tournament", currentTournament?.id] })
+      queryClient.invalidateQueries({ queryKey: ["tournament"] })
+      queryClient.invalidateQueries({ queryKey: ["tournaments"] })
       queryClient.invalidateQueries({ queryKey: ["categories"] })
       queryClient.invalidateQueries({ queryKey: ["athlete_laps"] })
       queryClient.invalidateQueries({ queryKey: ["last_five_laps"] })

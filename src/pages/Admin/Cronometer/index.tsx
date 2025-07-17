@@ -40,6 +40,7 @@ export const Cronometer = () => {
     setIsModalOpen(true)
   }
   const handleConfirmFinish = () => {
+    stopTimer()
     finishTournament()
     setIsModalOpen(false)
     setConfirmationText("")
