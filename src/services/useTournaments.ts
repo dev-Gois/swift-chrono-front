@@ -1,7 +1,7 @@
 import { useTournamentStore } from "@/stores/tournaments"
 import { useAuthStore } from "@/stores/auth"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { COLLECTION_TOURNAMENTS_ROUTE, FINISH_TOURNAMENT_ROUTE, MEMBER_TOURNAMENTS_ROUTE, START_TOURNAMENT_ROUTE } from "@/constants/api_routes"
+import { COLLECTION_TOURNAMENTS_ROUTE, FINISH_TOURNAMENT_ROUTE, MEMBER_TOURNAMENTS_ROUTE, RESET_TOURNAMENT_ROUTE, START_TOURNAMENT_ROUTE } from "@/constants/api_routes"
 import { api } from "@/hooks/axios"
 import { toast, useToast } from "@/hooks/use-toast"
 import { TournamentRequest, TournamentResponse } from "@/types/tournament"
@@ -139,6 +139,33 @@ export const useFinishTournament = () => {
       toast({
         title: "Erro!",
         description: "Erro ao finalizar torneio.",
+        variant: "destructive"
+      })
+    }
+  })
+}
+
+export const useResetTournament = () => {
+  const queryClient = useQueryClient()
+  const { currentTournament } = useTournamentStore()
+  const { toast } = useToast()
+
+  return useMutation({
+    mutationFn: async () => {
+      const response = await api.post(RESET_TOURNAMENT_ROUTE(currentTournament?.id as string))
+      return response.data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tournament", currentTournament?.id] })
+      toast({
+        title: "Sucesso!",
+        description: "Torneio resetado com sucesso."
+      })
+    },
+    onError: () => {
+      toast({
+        title: "Erro!",
+        description: "Erro ao resetar torneio.",
         variant: "destructive"
       })
     }

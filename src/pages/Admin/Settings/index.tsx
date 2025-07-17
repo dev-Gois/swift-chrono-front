@@ -10,7 +10,7 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
 import { tournamentFormSchema, TournamentFormValues } from "./utils"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
-import { useDeleteTournament, useUpdateTournament } from "@/services/useTournaments"
+import { useDeleteTournament, useResetTournament, useUpdateTournament } from "@/services/useTournaments"
 import { useNavigate } from "react-router-dom"
 import { useToast } from "@/hooks/use-toast"
 
@@ -21,7 +21,7 @@ export default function Settings() {
   const navigate = useNavigate()
   const { mutate: deleteTournament, isPending: isDeleting } = useDeleteTournament()
   const { mutate: updateTournament, isPending: isUpdating } = useUpdateTournament()
-
+  const { mutate: resetTournament, isPending: isResetting } = useResetTournament()
   const form = useForm<TournamentFormValues>({
     resolver: zodResolver(tournamentFormSchema),
     defaultValues: {
@@ -71,6 +71,12 @@ export default function Settings() {
         })
       }
     })
+  }
+
+  const handleReset = () => {
+    if (!currentTournament) return
+
+    resetTournament()
   }
 
   return (
@@ -156,7 +162,7 @@ export default function Settings() {
             </p>
           </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="flex justify-end gap-2">
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="destructive">Deletar Torneio</Button>
@@ -177,6 +183,30 @@ export default function Settings() {
                   className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
                 >
                   {isDeleting ? "Deletando..." : "Deletar"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+          <AlertDialog>
+            <AlertDialogTrigger asChild>
+              <Button variant="destructive">Resetar Torneio</Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Você tem certeza?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Esta ação não pode ser desfeita. Isso irá resetar o torneio
+                  e remover todos os dados associados do nosso servidor.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleReset}
+                  disabled={isResetting}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
+                  {isResetting ? "Resetando..." : "Resetar"}
                 </AlertDialogAction>
               </AlertDialogFooter>
             </AlertDialogContent>

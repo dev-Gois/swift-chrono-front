@@ -21,3 +21,5 @@ export const IMPORT_ATHLETES_CSV_ROUTE = (tournamentId: string) => `${COLLECTION
 export const START_TOURNAMENT_ROUTE = (tournamentId: string) => `${COLLECTION_TOURNAMENTS_ROUTE}/${tournamentId}/start`;
 
 export const FINISH_TOURNAMENT_ROUTE = (tournamentId: string) => `${COLLECTION_TOURNAMENTS_ROUTE}/${tournamentId}/finish`;
+
+export const RESET_TOURNAMENT_ROUTE = (tournamentId: string) => `${COLLECTION_TOURNAMENTS_ROUTE}/${tournamentId}/reset`;
