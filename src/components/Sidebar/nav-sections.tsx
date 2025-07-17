@@ -2,7 +2,7 @@
 
 import {
   UserRound,
-  LandPlot,
+  Trophy,
   LayoutList,
   Medal,
   Settings,
@@ -38,6 +38,14 @@ export function NavSections({ currentTournament }: { currentTournament: Tourname
             <Link to="/dashboard/athlete-laps" className="w-full" aria-disabled={!currentTournament}>
               <Medal />
               <span>Voltas</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild>
+            <Link to="/dashboard/ranking" className="w-full" aria-disabled={!currentTournament}>
+              <Trophy />
+              <span>Ranking</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>

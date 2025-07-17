@@ -10,7 +10,7 @@ import { Categories } from './pages/Admin/Categories';
 import Settings from './pages/Admin/Settings';
 import { AthleteLaps } from './pages/Admin/AthleteLaps';
 import { Cronometer } from './pages/Admin/Cronometer';
-
+import { Ranking } from './pages/Admin/Ranking';
 function App() {
   useInitAuth()
 
@@ -32,6 +32,7 @@ function App() {
             <Route path="settings" element={<Settings />} />
             <Route path="athlete-laps" element={<AthleteLaps />} />
             <Route path="cronometer" element={<Cronometer />} />
+            <Route path="ranking" element={<Ranking />} />
             </Route>
           <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>

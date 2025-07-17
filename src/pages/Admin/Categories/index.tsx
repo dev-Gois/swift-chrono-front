@@ -22,14 +22,12 @@ import { Label } from "@/components/ui/label"
 import { Plus, Pencil, Trash2, Upload } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
-import { useCategoriesStore } from "@/stores/categories"
 import { useFetchCategoriesPaginated } from "@/services/useCategories"
 import { Loading } from "@/components/Loading"
 import { useCreateCategory, useUpdateCategory, useDeleteCategory, useImportCategoriesCSV } from "@/services/useCategories"
 import { Category } from "./types"
 
 export const Categories = () => {
-  // Removido o uso do store, agora só usa a resposta paginada
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isImportModalOpen, setIsImportModalOpen] = useState(false)
