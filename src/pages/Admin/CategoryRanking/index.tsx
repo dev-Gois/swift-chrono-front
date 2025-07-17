@@ -1,5 +1,5 @@
 import { useParams } from "react-router-dom";
-import { useFetchRanking } from "@/services/useRanking";
+import { useFetchRanking, downloadRankingPdf } from "@/services/useRanking";
 import {
   Table,
   TableHeader,
@@ -9,6 +9,7 @@ import {
   TableCell,
 } from "@/components/ui/table";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
 export const CategoryRanking = () => {
   const { categoryId } = useParams();
@@ -23,11 +24,22 @@ export const CategoryRanking = () => {
     );
   }
 
+  const handleDownloadPdf = () => {
+    if (categoryId) {
+      downloadRankingPdf(categoryId);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto w-full py-10">
       <Card className="shadow-lg border-primary/20">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-primary">Ranking da Categoria</CardTitle>
+          {Array.isArray(ranking) && ranking.length > 0 && (
+            <Button className="mt-4" onClick={handleDownloadPdf}>
+              Baixar PDF
+            </Button>
+          )}
         </CardHeader>
         <CardContent>
           <div className="overflow-x-auto rounded-lg">
