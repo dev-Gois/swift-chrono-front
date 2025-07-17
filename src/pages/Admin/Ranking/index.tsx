@@ -18,7 +18,7 @@ export const Ranking = () => {
             categories?.categories?.map((cat: any) => (
               <Card
                 key={cat.id}
-                className="flex items-center justify-center h-32 rounded-xl shadow-md border border-primary/10 transition-all duration-200 hover:shadow-xl hover:border-primary/40 hover:-translate-y-1 cursor-pointer group bg-white"
+                className="flex items-center justify-center h-32 rounded-xl shadow-md border border-primary/10 transition-all duration-200 hover:shadow-xl hover:border-primary/40 hover:-translate-y-1 active:scale-95 cursor-pointer group bg-white"
               >
                 <CardContent className="flex flex-col items-center justify-center w-full h-full p-4">
                   <span className="text-lg font-semibold text-primary group-hover:text-primary/80 text-center truncate w-full">
