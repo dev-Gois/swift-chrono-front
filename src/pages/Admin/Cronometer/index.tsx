@@ -27,6 +27,7 @@ export const Cronometer = () => {
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [confirmationText, setConfirmationText] = useState("")
   const [plate, setPlate] = useState("")
+  const [disqualificationPlate, setDisqualificationPlate] = useState("")
   const { mutate: startTournament } = useStartTournament()
   const { mutate: finishTournament } = useFinishTournament()
   const { mutate: createAthleteLap } = useCreateAthleteLap()
@@ -79,6 +80,13 @@ export const Cronometer = () => {
     if (intervalRef.current) {
       clearInterval(intervalRef.current)
     }
+  }
+
+  const handleCreateDisqualification = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault()
+    if (!disqualificationPlate) return
+    createDisqualification(disqualificationPlate)
+    setDisqualificationPlate("")
   }
 
   useEffect(() => {
@@ -137,6 +145,7 @@ export const Cronometer = () => {
                     placeholder="Digite a placa do atleta"
                     className="text-lg py-6 px-4 border-2 border-primary/40 focus:border-primary focus:ring-4 focus:ring-primary/30 rounded-xl transition-all duration-200 shadow-sm"
                     onChange={(e) => setPlate(e.target.value)}
+                    value={plate}
                   />
                   <Button
                     type="submit"
@@ -184,10 +193,12 @@ export const Cronometer = () => {
                 <CardTitle className="text-xl font-bold text-destructive tracking-tight">Desclassificar Atleta</CardTitle>
               </CardHeader>
               <CardContent>
-                <form className="flex flex-col gap-6 px-2 py-2">
+                <form onSubmit={handleCreateDisqualification} className="flex flex-col gap-6 px-2 py-2">
                   <Input
                     placeholder="Digite a placa do atleta"
                     className="text-lg py-6 px-4 border-2 border-destructive/40 focus:border-destructive focus:ring-4 focus:ring-destructive/30 rounded-xl transition-all duration-200 shadow-sm"
+                    value={disqualificationPlate}
+                    onChange={(e) => setDisqualificationPlate(e.target.value)}
                   />
                   <Button
                     type="submit"
