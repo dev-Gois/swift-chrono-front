@@ -12,6 +12,7 @@ import { AthleteLaps } from './pages/Admin/AthleteLaps';
 import { Cronometer } from './pages/Admin/Cronometer';
 import { Ranking } from './pages/Admin/Ranking';
 import { CategoryRanking } from './pages/Admin/CategoryRanking';
+import { Disqualifications } from './pages/Admin/Disqualifications';
 
 function App() {
   useInitAuth()
@@ -36,7 +37,8 @@ function App() {
             <Route path="cronometer" element={<Cronometer />} />
             <Route path="ranking" element={<Ranking />} />
             <Route path="ranking/:categoryId" element={<CategoryRanking />} />
-            </Route>
+            <Route path="disqualifications" element={<Disqualifications />} />
+          </Route>
           <Route path="/" element={<Navigate to="/login" replace />} />
         </Routes>
       </Router>

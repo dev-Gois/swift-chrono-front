@@ -20,6 +20,7 @@ export const useCreateDisqualification = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["last-five-disqualifications", currentTournament?.id] });
       queryClient.invalidateQueries({ queryKey: ["ranking"] })
+      queryClient.invalidateQueries({ queryKey: ["disqualifications"] })
       toast({
         title: "Sucesso",
         description: "Atleta desclassificado com sucesso",
@@ -42,6 +43,7 @@ export const useDeleteDisqualification = () => {
   return useMutation({
     mutationFn: (disqualificationId: string) => api.delete(MEMBER_DISQUALIFICATIONS_ROUTE(currentTournament?.id as string, disqualificationId)),
     onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["disqualifications"] })
       queryClient.invalidateQueries({ queryKey: ["last-five-disqualifications", currentTournament?.id] });
       queryClient.invalidateQueries({ queryKey: ["ranking"] })
       toast({
@@ -56,5 +58,13 @@ export const useDeleteDisqualification = () => {
         variant: "destructive",
       });
     },
+  });
+};
+
+export const useFetchDisqualifications = () => {
+  const { currentTournament } = useTournamentStore();
+  return useQuery({
+    queryKey: ["disqualifications"],
+    queryFn: () => api.get(COLLECTION_DISQUALIFICATIONS_ROUTE(currentTournament?.id as string)).then((res) => res.data),
   });
 };

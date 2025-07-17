@@ -6,7 +6,8 @@ import {
   LayoutList,
   Medal,
   Settings,
-  Timer
+  Timer,
+  Ban
 } from "lucide-react"
 import { Link } from "react-router-dom"
 
@@ -49,6 +50,14 @@ export function NavSections({ currentTournament }: { currentTournament: Tourname
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
+        <SidebarMenuItem>
+          <SidebarMenuButton asChild>
+            <Link to="/dashboard/disqualifications" className="w-full" aria-disabled={!currentTournament}>
+              <Ban />
+              <span>Desclassificações</span>
+            </Link>
+          </SidebarMenuButton>
+        </SidebarMenuItem>
       </SidebarMenu>
       <SidebarGroupLabel>Cadastros</SidebarGroupLabel>
       <SidebarMenu>
@@ -60,14 +69,6 @@ export function NavSections({ currentTournament }: { currentTournament: Tourname
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
-        {/* <SidebarMenuItem>
-          <SidebarMenuButton asChild>
-            <Link to="/dashboard/courses" className="w-full" aria-disabled={!currentTournament}>
-              <LandPlot />
-              <span>Percursos</span>
-            </Link>
-          </SidebarMenuButton>
-        </SidebarMenuItem> */}
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
             <Link to="/dashboard/categories" className="w-full" aria-disabled={!currentTournament}>
