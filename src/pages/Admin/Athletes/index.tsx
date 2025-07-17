@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Button } from "@/components/ui/button"
 import {
   Table,
@@ -29,12 +29,11 @@ import { Label } from "@/components/ui/label"
 import { Plus, Pencil, Trash2, Upload } from "lucide-react"
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog"
 import { useToast } from "@/hooks/use-toast"
-import { useCategoriesStore } from "@/stores/categories"
 import { useFetchAthletes } from "@/services/useAthletes"
 import { useFetchCategories } from "@/services/useCategories"
 import { Loading } from "@/components/Loading"
 import { useCreateAthlete, useUpdateAthlete, useDeleteAthlete, useImportAthletesCSV } from "@/services/useAthletes"
-
+import { useFetchCategoriesPaginated } from "@/services/useCategories"
 interface Athlete {
   id: string
   name: string
@@ -43,7 +42,6 @@ interface Athlete {
 }
 
 export const Athletes = () => {
-  const { categories } = useCategoriesStore()
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [isEditModalOpen, setIsEditModalOpen] = useState(false)
   const [isImportModalOpen, setIsImportModalOpen] = useState(false)
@@ -64,10 +62,11 @@ export const Athletes = () => {
   const [page, setPage] = useState(1)
   const itemsPerPage = 10
   const { data: athletesPaginated, isLoading: isLoadingAthletes } = useFetchAthletes(page, itemsPerPage)
-  const { isLoading: isLoadingCategories } = useFetchCategories()
+  const { data: categoriesPaginated, isLoading: isLoadingCategories } = useFetchCategoriesPaginated(1, 1000)
 
   const athletes = athletesPaginated?.athletes || []
   const pagy = athletesPaginated?.pagy
+  const categories = categoriesPaginated?.categories || []
 
   const resetForm = () => {
     setFormData({
