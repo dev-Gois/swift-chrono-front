@@ -29,11 +29,7 @@ export const Cronometer = () => {
   const { mutate: startTournament } = useStartTournament()
   const { mutate: finishTournament } = useFinishTournament()
   const { mutate: createAthleteLap } = useCreateAthleteLap()
-  const { data: lastFiveLaps, isLoading: isLoadingLastFiveLaps, isError: isErrorLastFiveLaps } = useLastFiveLaps()
-
-  useEffect(() => {
-    console.log(lastFiveLaps?.laps?.data)
-  }, [lastFiveLaps])
+  const { data: lastFiveLaps } = useLastFiveLaps()
 
   const handleFinish = () => {
     setIsModalOpen(true)

@@ -8,7 +8,7 @@ import { Dashboard } from './pages/Admin/Dashboard';
 import { Athletes } from './pages/Admin/Athletes';
 import { Categories } from './pages/Admin/Categories';
 import Settings from './pages/Admin/Settings';
-import { Ranking } from './pages/Admin/Ranking';
+import { AthleteLaps } from './pages/Admin/AthleteLaps';
 import { Cronometer } from './pages/Admin/Cronometer';
 
 function App() {
@@ -30,7 +30,7 @@ function App() {
             <Route path="athletes" element={<Athletes />} />
             <Route path="categories" element={<Categories />} />
             <Route path="settings" element={<Settings />} />
-            <Route path="ranking" element={<Ranking />} />
+            <Route path="athlete-laps" element={<AthleteLaps />} />
             <Route path="cronometer" element={<Cronometer />} />
             </Route>
           <Route path="/" element={<Navigate to="/login" replace />} />

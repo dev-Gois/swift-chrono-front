@@ -69,10 +69,6 @@ export const Athletes = () => {
   const athletes = athletesPaginated?.athletes || []
   const pagy = athletesPaginated?.pagy
 
-  useEffect(() => {
-    console.log(athletesPaginated)
-  }, [athletes])
-
   const resetForm = () => {
     setFormData({
       name: "",

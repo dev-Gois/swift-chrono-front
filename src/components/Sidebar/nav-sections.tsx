@@ -35,9 +35,9 @@ export function NavSections({ currentTournament }: { currentTournament: Tourname
         </SidebarMenuItem>
         <SidebarMenuItem>
           <SidebarMenuButton asChild>
-            <Link to="/dashboard/ranking" className="w-full" aria-disabled={!currentTournament}>
+            <Link to="/dashboard/athlete-laps" className="w-full" aria-disabled={!currentTournament}>
               <Medal />
-              <span>Ranking</span>
+              <span>Voltas</span>
             </Link>
           </SidebarMenuButton>
         </SidebarMenuItem>
