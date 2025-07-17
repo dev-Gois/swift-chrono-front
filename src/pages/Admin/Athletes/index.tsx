@@ -361,10 +361,10 @@ export const Athletes = () => {
                               if (open) {
                                 setSelectedAthlete(athlete)
                                 setFormData({
-                                  name: athlete.name,
-                                  plate: athlete.plate,
-                                  category_id: athlete.category_id,
-                                  team: athlete.team
+                                  name: athlete.attributes.name,
+                                  plate: athlete.attributes.plate,
+                                  category_id: athlete.attributes.category.id,
+                                  team: athlete.attributes.team
                                 })
                               } else {
                                 setSelectedAthlete(null)
@@ -402,6 +402,15 @@ export const Athletes = () => {
                                     value={formData.plate}
                                     onChange={(e) => setFormData(prev => ({ ...prev, plate: e.target.value }))}
                                     placeholder="Digite o número da placa"
+                                  />
+                                </div>
+                                <div className="grid gap-2">
+                                  <Label htmlFor="edit-team">Equipe</Label>
+                                  <Input
+                                    id="edit-team"
+                                    value={formData.team}
+                                    onChange={(e) => setFormData(prev => ({ ...prev, team: e.target.value }))}
+                                    placeholder="Digite a equipe do atleta"
                                   />
                                 </div>
                                 <div className="grid gap-2">
