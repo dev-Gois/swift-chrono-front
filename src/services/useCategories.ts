@@ -44,6 +44,7 @@ export const useCreateCategory = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories", currentTournament?.id] })
+      queryClient.invalidateQueries({ queryKey: ["categories-paginated"] })
     },
   })
 }
@@ -63,6 +64,7 @@ export const useUpdateCategory = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories", currentTournament?.id] })
+      queryClient.invalidateQueries({ queryKey: ["categories-paginated"] })
     },
   })
 }
@@ -83,6 +85,7 @@ export const useDeleteCategory = () => {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["categories", currentTournament?.id] })
+      queryClient.invalidateQueries({ queryKey: ["categories-paginated"] })
     },
   })
 }
