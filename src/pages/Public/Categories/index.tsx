@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import { useFetchCategoriesPaginated } from "@/services/useCategories";
+import { useRankingCategories } from "@/services/useRanking";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Trophy, Users, Clock, ArrowRight } from "lucide-react";
@@ -7,7 +7,7 @@ import { Category } from "@/pages/Admin/Categories/types";
 
 export const PublicCategories = () => {
   const navigate = useNavigate();
-  const { data: categoriesPaginated, isLoading } = useFetchCategoriesPaginated(1, 100);
+  const { data: categoriesPaginated, isLoading } = useRankingCategories();
   
   const categories = categoriesPaginated?.categories || [];
 

@@ -9,4 +9,7 @@ export interface Tournament {
   id: string
   name: string
   tournament_type: "sprint" | "laps"
+  race_day_mode: boolean
+  started_at?: string | null
+  finished_at?: string | null
 }

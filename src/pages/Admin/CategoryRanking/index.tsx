@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import { useFetchRanking, downloadRankingPdf } from "@/services/useRanking";
 import {
@@ -13,7 +14,10 @@ import { Button } from "@/components/ui/button";
 
 export const CategoryRanking = () => {
   const { categoryId } = useParams();
-  const { data: ranking, isLoading } = useFetchRanking(categoryId || "");
+  const [excludeGeneral, setExcludeGeneral] = useState(false);
+  const [downloading, setDownloading] = useState(false);
+  const [downloadError, setDownloadError] = useState("");
+  const { data: ranking, isLoading, isError } = useFetchRanking(categoryId || "");
 
   if (isLoading) {
     return (
@@ -24,9 +28,19 @@ export const CategoryRanking = () => {
     );
   }
 
-  const handleDownloadPdf = () => {
-    if (categoryId) {
-      downloadRankingPdf(categoryId);
+  const canExcludeGeneral = ranking?.[0]?.can_exclude_general === true;
+  const rankingName = ranking?.[0]?.ranking_name || ranking?.[0]?.category || "Ranking da Categoria";
+
+  const handleDownloadPdf = async () => {
+    if (!categoryId || downloading) return;
+    setDownloading(true);
+    setDownloadError("");
+    try {
+      await downloadRankingPdf(categoryId, canExcludeGeneral && excludeGeneral);
+    } catch {
+      setDownloadError("Não foi possível gerar o PDF. Tente novamente.");
+    } finally {
+      setDownloading(false);
     }
   };
 
@@ -34,11 +48,24 @@ export const CategoryRanking = () => {
     <div className="max-w-4xl mx-auto w-full py-10">
       <Card className="shadow-lg border-primary/20">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-primary">Ranking da Categoria</CardTitle>
+          <CardTitle className="text-2xl font-bold text-primary">{rankingName}</CardTitle>
           {Array.isArray(ranking) && ranking.length > 0 && (
-            <Button className="mt-4" onClick={handleDownloadPdf}>
-              Baixar PDF
-            </Button>
+            <div className="mt-4 space-y-3">
+              {canExcludeGeneral && (
+                <label className="flex items-center gap-2 text-sm">
+                  <input
+                    type="checkbox"
+                    checked={excludeGeneral}
+                    onChange={(event) => setExcludeGeneral(event.target.checked)}
+                  />
+                  Excluir os 3 primeiros da classificação geral no PDF
+                </label>
+              )}
+              <Button onClick={handleDownloadPdf} disabled={downloading}>
+                {downloading ? "Gerando PDF..." : "Baixar PDF"}
+              </Button>
+              {downloadError && <p role="alert" className="text-sm text-destructive">{downloadError}</p>}
+            </div>
           )}
         </CardHeader>
         <CardContent>
@@ -56,7 +83,7 @@ export const CategoryRanking = () => {
               </TableHeader>
               <TableBody>
                 {Array.isArray(ranking) && ranking.length > 0 ? (
-                  ranking.map((athlete: any, idx: number) => (
+                  ranking.map((athlete, idx) => (
                     <TableRow
                       key={athlete.plate + athlete.position}
                       className={
@@ -82,7 +109,7 @@ export const CategoryRanking = () => {
                 ) : (
                   <TableRow>
                     <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
-                      Nenhum atleta encontrado para esta categoria.
+                      {isError ? "Não foi possível carregar o ranking. Atualize a página para tentar novamente." : "Nenhum atleta encontrado para esta categoria."}
                     </TableCell>
                   </TableRow>
                 )}

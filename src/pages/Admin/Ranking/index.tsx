@@ -1,8 +1,8 @@
-import { useFetchCategoriesPaginated } from "@/services/useCategories";
+import { useRankingCategories } from "@/services/useRanking";
 import { Card, CardContent } from "@/components/ui/card";
 import { useNavigate } from "react-router-dom";
 export const Ranking = () => {
-  const { data: categories, isLoading } = useFetchCategoriesPaginated(1, 100);
+  const { data: categories, isLoading } = useRankingCategories();
     const navigate = useNavigate();
     return (
     <div className="max-w-5xl mx-auto w-full py-10">

@@ -3,7 +3,7 @@ import { useAuthStore } from "@/stores/auth"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { COLLECTION_TOURNAMENTS_ROUTE, FINISH_TOURNAMENT_ROUTE, MEMBER_TOURNAMENTS_ROUTE, RESET_TOURNAMENT_ROUTE, START_TOURNAMENT_ROUTE } from "@/constants/api_routes"
 import { api } from "@/hooks/axios"
-import { toast, useToast } from "@/hooks/use-toast"
+import { useToast } from "@/hooks/use-toast"
 import { TournamentRequest, TournamentResponse } from "@/types/tournament"
 import { ErrorResponse } from "@/types/request"
 

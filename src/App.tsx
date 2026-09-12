@@ -15,6 +15,7 @@ import { CategoryRanking } from './pages/Admin/CategoryRanking';
 import { Disqualifications } from './pages/Admin/Disqualifications';
 import { PublicCategories } from './pages/Public/Categories';
 import { PublicRanking } from './pages/Public/Ranking';
+import { TrainingDisplay } from './pages/Public/TrainingDisplay';
 
 function App() {
   useInitAuth()
@@ -26,6 +27,7 @@ function App() {
           {/* Rotas públicas */}
           <Route path="/categories" element={<PublicCategories />} />
           <Route path="/ranking/:categoryId" element={<PublicRanking />} />
+          <Route path="/training-display" element={<TrainingDisplay />} />
           
           {/* Rotas de autenticação */}
           <Route path="/login" element={<LoginPage />} />

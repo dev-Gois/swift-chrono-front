@@ -9,24 +9,18 @@ import { ErrorResponse } from "@/types/request"
 export const useFetchAthletes = (page: number = 1, items: number = 10) => {
   const setAthletes = useAthletesStore((state) => state.setAthletes)
   const { currentTournament } = useTournamentStore((state) => state)
-
-  if (!currentTournament) {
-    return {
-      data: undefined,
-      isLoading: false,
-      error: null,
-    }
-  }
+  const tournamentId = currentTournament?.id
 
   return useQuery<AthletesPaginatedResponse>({
-    queryKey: ["athletes", currentTournament.id, page, items],
+    queryKey: ["athletes", tournamentId, page, items],
     queryFn: async () => {
       const response = await api.get(
-        `${COLLECTION_ATHLETES_ROUTE(currentTournament.id)}?page=${page}&items=${items}`
+        `${COLLECTION_ATHLETES_ROUTE(tournamentId as string)}?page=${page}&limit=${items}`
       )
       setAthletes(response.data.athletes)
       return response.data
     },
+    enabled: !!tournamentId,
   })
 }
 

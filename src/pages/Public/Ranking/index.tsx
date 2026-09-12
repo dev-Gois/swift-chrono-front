@@ -46,7 +46,7 @@ export const PublicRanking = () => {
     }
   };
 
-  const categoryName = Array.isArray(ranking) && ranking.length > 0 ? ranking[0].category : "Categoria";
+  const categoryName = Array.isArray(ranking) && ranking.length > 0 ? (ranking[0].ranking_name || ranking[0].category) : "Categoria";
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">

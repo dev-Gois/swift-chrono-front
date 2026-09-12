@@ -27,6 +27,9 @@ export const RESET_TOURNAMENT_ROUTE = (tournamentId: string) => `${COLLECTION_TO
 export const COLLECTION_ATHLETE_LAPS_ROUTE = (tournamentId: string) => `${COLLECTION_TOURNAMENTS_ROUTE}/${tournamentId}/athlete_laps`;
 
 export const LAST_FIVE_LAPS_ROUTE = (tournamentId: string) => `${COLLECTION_ATHLETE_LAPS_ROUTE(tournamentId)}/last_five_laps`;
+export const BATCH_ATHLETE_LAPS_ROUTE = (tournamentId: string) => `${COLLECTION_ATHLETE_LAPS_ROUTE(tournamentId)}/batch_create`;
+export const BATCH_DESTROY_ATHLETE_LAPS_ROUTE = (tournamentId: string) => `${COLLECTION_ATHLETE_LAPS_ROUTE(tournamentId)}/batch_destroy`;
+export const CORRECT_ATHLETE_LAP_ROUTE = (tournamentId: string, lapId: string) => `${MEMBER_ATHLETE_LAPS_ROUTE(tournamentId, lapId)}/correct`;
 
 export const MEMBER_ATHLETE_LAPS_ROUTE = (tournamentId: string, athleteLapId: string) => `${COLLECTION_ATHLETE_LAPS_ROUTE(tournamentId)}/${athleteLapId}`;
 

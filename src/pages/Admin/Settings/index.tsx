@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useTournamentStore } from "@/stores/tournaments"
 import { useTheme } from "@/components/theme-provider"
-import { Moon, Sun } from "lucide-react"
+import { Moon, ShieldCheck, Sun } from "lucide-react"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
@@ -79,6 +79,11 @@ export default function Settings() {
     resetTournament()
   }
 
+  const toggleRaceDayMode = () => {
+    if (!currentTournament) return
+    updateTournament({ id: currentTournament.id, tournament: { race_day_mode: !currentTournament.race_day_mode } })
+  }
+
   return (
     <div className="space-y-6 p-6">
       <div>
@@ -111,11 +116,22 @@ export default function Settings() {
                   </FormItem>
                 )}
               />
-              <Button type="submit" disabled={isUpdating}>
+              <Button type="submit" disabled={isUpdating || currentTournament?.race_day_mode}>
                 {isUpdating ? "Salvando..." : "Salvar Alterações"}
               </Button>
             </form>
           </Form>
+        </CardContent>
+      </Card>
+
+      <Card className={currentTournament?.race_day_mode ? "border-amber-600" : ""}>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2"><ShieldCheck className="h-5 w-5" /> Dia da Prova</CardTitle>
+          <CardDescription>Bloqueia alterações em atletas, categorias e ações destrutivas da competição.</CardDescription>
+        </CardHeader>
+        <CardContent className="flex items-center justify-between gap-4">
+          <p className="text-sm font-medium">{currentTournament?.race_day_mode ? "Proteção ativa" : "Proteção desativada"}</p>
+          <Button variant={currentTournament?.race_day_mode ? "outline" : "default"} onClick={toggleRaceDayMode} disabled={isUpdating}>{currentTournament?.race_day_mode ? "Desativar" : "Ativar modo"}</Button>
         </CardContent>
       </Card>
 
@@ -165,7 +181,7 @@ export default function Settings() {
         <CardFooter className="flex justify-end gap-2">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive">Deletar Torneio</Button>
+              <Button variant="destructive" disabled={currentTournament?.race_day_mode}>Deletar Torneio</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
@@ -189,7 +205,7 @@ export default function Settings() {
           </AlertDialog>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive">Resetar Torneio</Button>
+              <Button variant="destructive" disabled={currentTournament?.race_day_mode}>Resetar Torneio</Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
@@ -215,4 +231,4 @@ export default function Settings() {
       </Card>
     </div>
   )
-} 
+}
