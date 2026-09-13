@@ -1,9 +1,16 @@
 import { useEffect, useState } from "react"
 
-type Call = { id: string; plates: string[] }
+type DisplaySlot = { key: string; plate: string } | null
+
+const SLOT_COUNT = 32
+
+const slotPosition = (index: number) => ({
+  left: `${4 + (index % 8) * 12.2}%`,
+  top: `${10 + Math.floor(index / 8) * 22}%`,
+})
 
 export const TrainingDisplay = () => {
-  const [calls, setCalls] = useState<Call[]>([])
+  const [slots, setSlots] = useState<DisplaySlot[]>(() => Array.from({ length: SLOT_COUNT }, () => null))
   const [total, setTotal] = useState(0)
   const [started, setStarted] = useState(false)
 
@@ -12,17 +19,24 @@ export const TrainingDisplay = () => {
     channel.onmessage = (event) => {
       const message = event.data as { type: string; total?: number; plates?: string[]; id?: string }
       if (message.type === "start") {
-        setCalls([])
+        setSlots(Array.from({ length: SLOT_COUNT }, () => null))
         setTotal(message.total || 0)
         setStarted(true)
       }
       if (message.type === "call" && message.plates?.length && message.id) {
         const call = { id: message.id, plates: message.plates }
-        setCalls((current) => [...current.slice(-7), call])
-        window.setTimeout(() => setCalls((current) => current.filter((item) => item.id !== call.id)), 5500)
+        setSlots((current) => {
+          const next = [...current]
+          call.plates.forEach((plate, index) => {
+            const slotIndex = next.findIndex((slot) => slot === null)
+            if (slotIndex !== -1) next[slotIndex] = { key: `${call.id}-${index}`, plate }
+          })
+          return next
+        })
+        window.setTimeout(() => setSlots((current) => current.map((slot) => slot?.key.startsWith(call.id) ? null : slot)), 5500)
       }
       if (message.type === "end") {
-        setCalls([])
+        setSlots(Array.from({ length: SLOT_COUNT }, () => null))
         setStarted(false)
       }
     }
@@ -35,15 +49,17 @@ export const TrainingDisplay = () => {
         <h1 className="text-2xl font-semibold tracking-tight">Treino de chegada</h1>
         <span className="font-mono text-sm text-white/50">{started ? `${total} placas na sessão` : "Aguardando início"}</span>
       </header>
-      <section aria-live="polite" className="grid min-h-[calc(100vh-10rem)] grid-cols-2 content-center gap-6 md:grid-cols-3 lg:grid-cols-4">
-        {calls.flatMap((call) => call.plates.map((plate) => (
-          <div key={`${call.id}-${plate}`} className="animate-[training-card-in_180ms_ease-out] rounded-lg border border-white/15 bg-white/[0.06] p-8 text-center font-mono text-5xl font-bold shadow-[0_8px_30px_rgba(0,0,0,0.3)] transition-opacity">
-            {plate}
+      <section aria-live="polite" className="relative min-h-[calc(100vh-10rem)] overflow-hidden">
+        {slots.map((slot, index) => slot && (
+          <div key={slot.key} style={slotPosition(index)} className="absolute w-[11%] min-w-[72px]">
+            <div className="animate-[training-number-life_5500ms_ease-in-out_forwards] rounded-xl border border-white/15 bg-white/[0.07] px-3 py-5 text-center font-mono text-4xl font-bold shadow-[0_8px_30px_rgba(0,0,0,0.3)] md:text-5xl">
+              {slot.plate}
+            </div>
           </div>
-        )))}
-        {!calls.length && <p className="col-span-full text-center text-xl text-white/45">{started ? "A próxima chegada aparecerá aqui" : "Abra esta tela no segundo monitor e inicie o treino"}</p>}
+        ))}
+        {!slots.some(Boolean) && <p className="absolute inset-0 flex items-center justify-center text-center text-xl text-white/45">{started ? "A próxima chegada aparecerá aqui" : "Abra esta tela no segundo monitor e inicie o treino"}</p>}
       </section>
-      <style>{`@keyframes training-card-in { from { opacity: 0; transform: scale(.84); } to { opacity: 1; transform: scale(1); } }`}</style>
+      <style>{`@keyframes training-number-life { 0% { opacity: 0; transform: translateY(18px) scale(.86); } 12% { opacity: 1; transform: translateY(0) scale(1); } 78% { opacity: 1; transform: translateY(0) scale(1); } 100% { opacity: 0; transform: translateY(-14px) scale(.94); } }`}</style>
     </main>
   )
 }
